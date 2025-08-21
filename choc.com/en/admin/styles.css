@@ -1,0 +1,7 @@
+body { min-height: 100vh; }
+.toast-msg { position: fixed; right: 16px; bottom: 16px; opacity: 0; transform: translateY(10px); transition: all .2s ease; z-index: 1055; padding: .5rem .75rem; border-radius: .25rem; color: #fff; }
+.toast-msg.show { opacity: 1; transform: translateY(0); }
+.toast-info { background: #0d6efd; }
+.toast-success { background: #198754; }
+.toast-error { background: #dc3545; }
+img.thumb { max-height: 40px; display: block; }
