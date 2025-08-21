@@ -29,9 +29,9 @@
   /* content: "\e929"; */
   content: url(../images/iconnn-bg.png);
 }
-/* .icon-pattern-ver:before {
+.icon-pattern-ver:before {
   content: url(../images/iconnn-bg.png);
-} */
+}
 .icon-pattern-single:before {
   content: url(../images/iconnn-bg.png);
 }

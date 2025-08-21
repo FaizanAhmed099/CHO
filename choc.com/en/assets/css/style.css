@@ -4926,7 +4926,7 @@ span.icon-share-icon:hover {
 /********************overview**************************/
 .main-content-wrapper {
   background-color: #fff;
-  min-height: 630px
+  min-height: 0px
 }
 
 .dark-blue-gradient {
