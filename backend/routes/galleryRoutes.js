@@ -11,7 +11,6 @@ router.get('/', ctrl.getAll);
 router.get('/:id', ctrl.getById);
 
 // Admin protected
-router.post('/', auth, uploadSingleGalleryImage, ctrl.create); // single
 router.put('/:id', auth, uploadSingleGalleryImage, ctrl.update);
 router.delete('/:id', auth, ctrl.remove);
 

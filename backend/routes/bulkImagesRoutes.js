@@ -13,5 +13,7 @@ router.get('/:id', ctrl.getById);
 // Admin protected
 router.post('/', auth, uploadBulkImages, ctrl.create);
 router.delete('/:id', auth, ctrl.remove);
+router.put('/image/:imageId', auth, ctrl.updateImage);
+router.delete('/image/:imageId', auth, ctrl.removeImage);
 
 module.exports = router;
