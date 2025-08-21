@@ -1726,6 +1726,50 @@
 
     $('[data-action="back"]').addEventListener('click', renderClientsTab);
 
+    // Drag-and-drop + preview for optional logo replace
+    const dzE = $('#logoEditDropzone');
+    const fileInputE = $('#logoEditInput');
+    const previewWrapE = $('#logoEditPreviewWrap');
+    const previewImgE = $('#logoEditPreview');
+    const imgErrE = $('#logoEditError');
+
+    function showLogoError(msg) {
+      if (!imgErrE || !dzE) return;
+      imgErrE.textContent = msg || '';
+      imgErrE.classList.toggle('d-none', !msg);
+      dzE.classList.toggle('border-danger', !!msg);
+    }
+    function clearLogoError() { showLogoError(''); }
+    function setLogoPreview(file) {
+      if (!previewWrapE || !previewImgE) return;
+      if (!file) { previewWrapE.style.display = 'none'; previewImgE.removeAttribute('src'); return; }
+      const url = URL.createObjectURL(file);
+      previewImgE.src = url;
+      previewWrapE.style.display = 'block';
+      clearLogoError();
+    }
+
+    if (dzE && fileInputE) {
+      dzE.addEventListener('click', () => fileInputE.click());
+      dzE.addEventListener('dragover', (e) => { e.preventDefault(); dzE.classList.add('border-primary'); });
+      dzE.addEventListener('dragleave', () => dzE.classList.remove('border-primary'));
+      dzE.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dzE.classList.remove('border-primary');
+        const f = e.dataTransfer?.files?.[0];
+        if (!f) return;
+        if (!f.type?.startsWith('image/')) return showLogoError('Logo must be an image file');
+        fileInputE.files = e.dataTransfer.files;
+        setLogoPreview(f);
+      });
+      fileInputE.addEventListener('change', (e) => {
+        const f = e.target.files?.[0];
+        if (!f) { clearLogoError(); return; }
+        if (!f.type?.startsWith('image/')) { showLogoError('Logo must be an image file'); return; }
+        setLogoPreview(f);
+      });
+    }
+
     $('#clientEditForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.currentTarget);
