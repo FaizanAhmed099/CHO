@@ -1,5 +1,0 @@
-# HTTrack Website Copier Cookie File
-# This file format is compatible with Netscape cookies
-tamimicontracting.com	TRUE	/en	FALSE	1999999999	.AspNetCore.Antiforgery.ayKwT560A5U	CfDJ8FJjFk-dyytHijWGaoU7EkMpNRB5WxF5gPs8nX2lrOf-oXXqs6PgjWzVjnj4uW0XI-cGIZ_xA-IZKgqbxZ1JeI708Uo6v2BrIHvd2JDtjOb11ugoRnZyFeaDxwkitwM_cjp1VGk1g3m3NL9aPT4aQp4
-tamimicontracting.com	TRUE	/	FALSE	1999999999	samesite	strict
-
