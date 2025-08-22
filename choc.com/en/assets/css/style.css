@@ -3536,11 +3536,13 @@ header {
 @media (max-width: 1399.98px) {
   .our-commitment-section .wc-content h5 {
     display: block;
+    text-align: justify;
   }
 }
 @media (max-width: 991.98px) {
   .our-commitment-section .wc-content h5 {
     max-width: inherit;
+    text-align: justify;
   }
 }
 .our-commitment-section .our-commitment-icons {
@@ -4063,7 +4065,7 @@ header {
 
 .copyright {
   background: #231f20;
-  padding: 40px 0;
+  padding: 63px 0;
   color: rgba(255, 255, 255, 0.7);
   font-size: 12px;
   position: relative;
