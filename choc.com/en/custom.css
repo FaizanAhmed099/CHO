@@ -1629,6 +1629,18 @@
   .grid-item img {
     height: auto; /* prevents image cutoff */
   }
+  .step-card:hover{
+    width: 200px;
+    height: 210px;
+    border: solid 1px black;
+    border-radius: 50%;
+  }
+  .wc-content{
+    padding: 0px !important;
+  }
+  .loading-img{
+    margin: auto;
+  }
 }
 
 .easy-steps-text {
@@ -1701,7 +1713,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between; /* keeps text left, image right */
-  padding: 50px 20px;
+  padding: 0px 20px;
   max-width: 1200px;
   margin: auto;
 }
