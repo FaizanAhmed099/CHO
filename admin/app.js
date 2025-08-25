@@ -77,27 +77,54 @@ window.App = (function () {
 
   function renderLogin() {
     $("#app").innerHTML = `
-      <div class="container login-container">
-        <div class="col-md-5 col-lg-4 w-100">
-          <div class="card shadow-lg border-0">
+      <div class="container login-container position-relative overflow-hidden">
+        <div class="auth-decor-blob one"></div>
+        <div class="auth-decor-blob two"></div>
+
+        <div class="auth-card mx-auto">
+          <div class="card shadow-lg border-0 rounded-4">
             <div class="card-body p-4 p-md-5">
-              <h3 class="text-center mb-4">Admin Panel</h3>
-              <form id="loginForm">
+              <div class="brand text-center mb-4">
+                <div class="brand-mark mx-auto mb-2"><i class="fa-solid fa-lock"></i></div>
+                <h3 class="mb-0">Admin Panel</h3>
+                <p class="text-muted mb-0">Sign in to manage your content</p>
+              </div>
+              <form id="loginForm" autocomplete="on">
                 <div class="form-floating mb-3">
                   <input type="email" value="admin@example.com" class="form-control" name="email" id="email" placeholder="name@example.com" required />
                   <label for="email">Email address</label>
                 </div>
-                <div class="form-floating mb-4">
-                  <input type="password" value="password123" class="form-control" name="password" id="password" placeholder="Password" required />
-                  <label for="password">Password</label>
+                <div class="mb-4 position-relative">
+                  <div class="form-floating">
+                    <input type="password" value="password123" class="form-control pe-5" name="password" id="password" placeholder="Password" required />
+                    <label for="password">Password</label>
+                  </div>
+                  <button type="button" id="togglePwd" class="btn btn-link position-absolute top-50 end-0 translate-middle-y pe-3 text-muted" tabindex="-1" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
                 </div>
-                <button class="btn btn-primary w-100 btn-lg" type="submit">Sign In</button>
+                <button class="btn btn-primary w-100 btn-lg shadow-sm auth-submit" type="submit">
+                  <i class="fa-solid fa-right-to-bracket me-2"></i> Sign In
+                </button>
               </form>
+              <div class="text-center mt-4 text-muted small">&copy; <span id="year"></span> Admin</div>
             </div>
           </div>
         </div>
       </div>
     `;
+
+    // year
+    const yEl = document.getElementById("year");
+    if (yEl) yEl.textContent = new Date().getFullYear();
+
+    // password toggle
+    document.getElementById("togglePwd")?.addEventListener("click", () => {
+      const inp = document.getElementById("password");
+      if (!inp) return;
+      const isText = inp.getAttribute("type") === "text";
+      inp.setAttribute("type", isText ? "password" : "text");
+      const icon = document.querySelector("#togglePwd i");
+      if (icon) icon.className = isText ? "fa-regular fa-eye" : "fa-regular fa-eye-slash";
+    });
 
     $("#loginForm").addEventListener(
       "submit",

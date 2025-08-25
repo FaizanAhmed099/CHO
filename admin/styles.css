@@ -142,5 +142,34 @@ body.sidebar-visible .sidebar-overlay {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--light-gray);
+    padding: 2rem 1rem;
+    background: radial-gradient(1200px 600px at 80% -10%, #dbe8ff 0%, rgba(219,232,255,0) 60%),
+                radial-gradient(900px 500px at -10% 110%, #ffe9e3 0%, rgba(255,233,227,0) 60%),
+                var(--light-gray);
 }
+
+.auth-card { max-width: 440px; width: 100%; }
+.brand .brand-mark {
+    width: 56px; height: 56px; border-radius: 14px;
+    display: grid; place-items: center;
+    background: linear-gradient(135deg, #0d6efd, #5a8cff);
+    color: #fff; font-size: 1.25rem;
+    box-shadow: 0 10px 20px rgba(13,110,253,.25);
+}
+.auth-decor-blob {
+    position: absolute; filter: blur(40px); opacity: .35; z-index: 0;
+}
+.auth-decor-blob.one { width: 420px; height: 420px; border-radius: 50%; background: #cfe2ff; top: -120px; right: -120px; }
+.auth-decor-blob.two { width: 360px; height: 360px; border-radius: 50%; background: #ffd8cc; bottom: -140px; left: -140px; }
+
+.auth-submit { transition: transform .06s ease, box-shadow .2s ease; }
+.auth-submit:active { transform: translateY(1px); }
+
+/* Inputs polish */
+.form-control { border-radius: .6rem; }
+.form-floating>.form-control { padding-top: 1.25rem; padding-bottom: .75rem; }
+.form-control:focus { box-shadow: 0 0 0 .2rem rgba(13,110,253,.15); border-color: #86b7fe; }
+
+/* Card polish */
+.card.rounded-4 { border-radius: 1rem !important; }
+.card.rounded-4 .card-body { position: relative; z-index: 1; }
