@@ -307,7 +307,7 @@
                                 <h4 class="wow fadeInLeft">Partnering with some of the Kingdom&#x2019;s leading organizations, we are actively contributing to the transformation of Saudi Arabia and its transition towards diversified sustainable economy.</h4>
                         </div>
                     </div>
-                        <div class="col-sm-4 col-md-3 col-lg-3 wow fadeInUp">
+                        <!-- <div class="col-sm-4 col-md-3 col-lg-3 wow fadeInUp">
                             <a href="#" target="_blank">
                                 <div class="our-clients-column p-4">
                                     <img src="../uploads/manger/choc/logo1.png" alt="" />
@@ -586,7 +586,7 @@
                                     <img src="../uploads/manger/choc/logo40.png" alt="" />
                                 </div>
                             </a>
-                        </div>
+                        </div> -->
             </div>
         </div>
     </section>
@@ -1148,7 +1148,56 @@
         });
         //VIEWPORT SCRIPT ENDS
     </script>
-</body>
+    <script>
+      // Dynamically load clients from backend without changing layout
+      (async function () {
+        try {
+          var API_BASE = 'https://cho-tj61.onrender.com';
+          var endpoint = API_BASE + '/api/clients';
+
+          var res = await fetch(endpoint, { headers: { 'Accept': 'application/json' } });
+          if (!res.ok) throw new Error('Failed to load clients: ' + res.status);
+          var clients = await res.json();
+          if (!Array.isArray(clients) || clients.length === 0) return; // keep static tiles
+
+          // Find the row that contains the heading + tiles
+          var row = document.querySelector('.our-clients-section .container .row');
+          if (!row) return;
+
+          // Keep the first heading col, remove existing tiles
+          var headingCol = row.querySelector('.col-lg-12.mb-4');
+          var cols = Array.from(row.children);
+          cols.forEach(function (col) { if (col !== headingCol) row.removeChild(col); });
+
+          function logoSrc(logo) {
+            if (!logo) return '';
+            return (/^https?:\/\//i.test(logo)) ? logo : (API_BASE.replace(/\/+$/,'') + (logo.startsWith('/') ? logo : '/' + logo));
+          }
+
+          // Append new tiles with the exact same structure/classes
+          clients
+            .filter(function (c) { return c && c.isActive !== false && c.logo; })
+            .forEach(function (c) {
+              var col = document.createElement('div');
+              col.className = 'col-sm-4 col-md-3 col-lg-3 wow fadeInUp';
+              col.innerHTML =
+                '<a href="#" target="_blank">' +
+                  '<div class="our-clients-column p-4">' +
+                    '<img src="' + logoSrc(c.logo) + '" alt="' + (c.name || '') + '">' +
+                  '</div>' +
+                '</a>';
+              row.appendChild(col);
+            });
+
+          // Re-init WOW if available so new tiles animate
+          if (window.WOW) { new WOW().init(); }
+        } catch (e) {
+          // Silently fallback to the existing static tiles
+          console.warn('Clients API fallback to static tiles:', e && e.message ? e.message : e);
+        }
+      })();
+    </script>
+  </body>
 
 <!-- Mirrored from tamimicontracting.com/en/clients by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 07 Jul 2025 13:15:49 GMT -->
 </html>
