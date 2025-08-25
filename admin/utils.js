@@ -1,8 +1,13 @@
 "use strict";
 
 window.AdminUtils = (function () {
-  const API_BASE = window.__API_BASE__ || "http://localhost:5000";
-  const TOKEN_KEY = "choc_admin_token";
+  const API_BASE = window.__API_BASE__ || "https://cho-tj61.onrender.com";
+  // Namespace token storage by API host to prevent cross-environment token reuse
+  let TOKEN_KEY = "l9PpjeTCJjk1ovm/vbJYNko45DF1OjOa7sztxL/85n+17o0vnSZ9kMpIep8dc2k5";
+  try {
+    const host = new URL(API_BASE).host;
+    TOKEN_KEY = `${TOKEN_KEY}@${host}`;
+  } catch {}
 
   function $(sel, root = document) {
     return root.querySelector(sel);
@@ -146,7 +151,7 @@ window.AdminUtils = (function () {
 
       const originalText = submitBtn.innerHTML;
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Working...`;
+      submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`;
 
       try {
         await handler(e);
