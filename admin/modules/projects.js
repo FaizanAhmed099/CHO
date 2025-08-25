@@ -255,7 +255,8 @@ window.ProjectsModule = (function () {
       dz.style.display = "flex";
     });
     // --- Slug auto-generation ---
-    let isSlugManuallyEdited = !!data.slug;
+    // Treat slug as auto-managed until the user types in the slug field
+    let isSlugManuallyEdited = false;
     const slugify = (text) =>
       text
         .toString()
@@ -264,11 +265,32 @@ window.ProjectsModule = (function () {
         .replace(/\s+/g, "-")
         .replace(/[^\w-]+/g, "")
         .replace(/--+/g, "-");
+    // Initialize/normalize slug on load when not manually edited (edit mode too)
+    if (!isSlugManuallyEdited && $("#title").value.trim()) {
+      slugInput.value = slugify($("#title").value);
+    }
     $("#title").addEventListener("input", () => {
       if (!isSlugManuallyEdited) slugInput.value = slugify($("#title").value);
     });
+    // On title blur, if slug still empty and not manual, generate it
+    $("#title").addEventListener("blur", () => {
+      if (!isSlugManuallyEdited && !slugInput.value.trim()) {
+        slugInput.value = slugify($("#title").value);
+      }
+    });
     slugInput.addEventListener("input", () => {
       isSlugManuallyEdited = slugInput.value.trim() !== "";
+    });
+    // Also mark manual on change (covers autofill/paste cases)
+    slugInput.addEventListener("change", () => {
+      isSlugManuallyEdited = slugInput.value.trim() !== "";
+    });
+    // If user leaves slug empty and blurs the field, auto-fill from title
+    slugInput.addEventListener("blur", () => {
+      if (!slugInput.value.trim()) {
+        slugInput.value = slugify($("#title").value);
+        // keep isSlugManuallyEdited as false so future title edits continue to update
+      }
     });
     form.addEventListener(
       "submit",

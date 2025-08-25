@@ -409,7 +409,8 @@ window.DirectorsModule = (function () {
     bindAutoArabic(bioInput, bioArInput);
 
     // --- Live Slug Generation ---
-    let isSlugManuallyEdited = !!data.slug;
+    // Treat slug as auto-managed until the user types in the slug field
+    let isSlugManuallyEdited = false;
     const slugify = (text) =>
       text
         .toString()
@@ -418,11 +419,33 @@ window.DirectorsModule = (function () {
         .replace(/\s+/g, "-")
         .replace(/[^\w-]+/g, "")
         .replace(/--+/g, "-");
+    // Initialize/normalize slug on load when not manually edited
+    // Always derive from current name so edit mode stays in sync
+    if (!isSlugManuallyEdited && nameInput.value.trim()) {
+      slugInput.value = slugify(nameInput.value);
+    }
     nameInput.addEventListener("input", () => {
       if (!isSlugManuallyEdited) slugInput.value = slugify(nameInput.value);
     });
+    // On blur, if slug still empty and user hasn't manually edited, generate it
+    nameInput.addEventListener("blur", () => {
+      if (!isSlugManuallyEdited && !slugInput.value.trim()) {
+        slugInput.value = slugify(nameInput.value);
+      }
+    });
     slugInput.addEventListener("input", () => {
       isSlugManuallyEdited = slugInput.value.trim() !== "";
+    });
+    // Also mark manual on change (covers autofill/paste cases that may not trigger input reliably)
+    slugInput.addEventListener("change", () => {
+      isSlugManuallyEdited = slugInput.value.trim() !== "";
+    });
+    // If user leaves slug empty and blurs the field, auto-fill from name
+    slugInput.addEventListener("blur", () => {
+      if (!slugInput.value.trim()) {
+        slugInput.value = slugify(nameInput.value);
+        // keep isSlugManuallyEdited as false so future name edits continue to update
+      }
     });
 
     // --- File Handling (FIXED) ---

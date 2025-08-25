@@ -1,11 +1,21 @@
 // backend/utils/translate.js
-// FINAL, STABLE VERSION.
-// Uses a reliable (though unofficial) Google Translate endpoint as the primary method.
-// This provides Google's translation quality without needing an API key or credit card.
-// It includes a fallback to the MyMemory API for added robustness.
+// ============================================================================
+// FINAL, SIMPLIFIED, AND CORRECTED VERSION
+//
+// This utility is specifically configured for the translate.com API using
+// the confirmed working endpoint and request format. It is the most direct
+// and reliable solution based on the provided API details.
+//
+// Requirements:
+// 1. Your .env file must contain:
+//    TRANSLATE_COM_API_KEY=168ac3191ddc3a
+// 2. 'node-fetch' should be installed (`npm install node-fetch`)
+// ============================================================================
 
+/**
+ * A helper function to ensure a `fetch` implementation is available.
+ */
 async function getFetch() {
-  // Helper to ensure fetch is available in Node.js environments.
   if (typeof fetch !== "undefined") return fetch;
   try {
     const { default: nodeFetch } = await import("node-fetch");
@@ -16,7 +26,8 @@ async function getFetch() {
 }
 
 // --- In-Process Caching ---
-const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+// Caches successful translations to improve performance and avoid redundant API calls.
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // Cache items for 6 hours
 if (!global.__translate_cache) global.__translate_cache = new Map();
 
 function cacheGet(key) {
@@ -35,73 +46,9 @@ function cacheSet(key, value) {
   });
 }
 
-// --- API Provider 1: Google Translate (Unofficial Endpoint) ---
-async function googleTranslate(text) {
-  const cacheKey = `google:${text}`;
-  const cached = cacheGet(cacheKey);
-  if (cached) return cached;
-
-  const _fetch = await getFetch();
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=${encodeURIComponent(text)}`;
-
-  try {
-    const response = await _fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0' } // A user-agent can help avoid blocks
-    });
-
-    if (!response.ok) {
-      throw new Error(`Google Translate endpoint responded with status ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    // The response is a nested array; the translation is in the first element.
-    const translatedText = data?.[0]?.[0]?.[0];
-
-    if (!translatedText) {
-      throw new Error("Could not parse a valid translation from Google's response.");
-    }
-
-    cacheSet(cacheKey, translatedText);
-    return translatedText;
-  } catch (error) {
-    console.error("Google Translate endpoint failed:", error.message);
-    throw error; // Re-throw to trigger the fallback.
-  }
-}
-
-// --- API Provider 2: MyMemory (Reliable Fallback) ---
-async function myMemoryTranslate(text) {
-  const cacheKey = `mymemory:${text}`;
-  const cached = cacheGet(cacheKey);
-  if (cached) return cached;
-  
-  const _fetch = await getFetch();
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ar`;
-
-  try {
-    const response = await _fetch(url);
-    if (!response.ok) {
-      throw new Error(`MyMemory API responded with status ${response.status}`);
-    }
-
-    const data = await response.json();
-    if (data.responseStatus !== 200 || !data.responseData?.translatedText) {
-      throw new Error("MyMemory did not return a valid translation.");
-    }
-
-    const translatedText = data.responseData.translatedText;
-    cacheSet(cacheKey, translatedText);
-    return translatedText;
-  } catch(error) {
-    console.error("MyMemory fallback failed:", error.message);
-    throw error;
-  }
-}
-
 
 /**
- * Main translation function. Translates English text to Arabic.
+ * The main translation function. Translates English text to Arabic.
  * @param {string} text The English text to translate.
  * @returns {Promise<string>} The translated Arabic text.
  */
@@ -111,21 +58,77 @@ async function toArabic(text) {
     return "";
   }
 
+  // 1. Get the API Key from your .env file.
+  const apiKey = process.env.TRANSLATE_COM_API_KEY;
+  if (!apiKey) {
+    console.error("FATAL: Translate.com API Key not found. Please ensure TRANSLATE_COM_API_KEY is set in your .env file.");
+    throw new Error("Translation service is not configured on the server.");
+  }
+
+  // 2. Check the cache for a prior translation.
+  const cacheKey = `translate.com:${inputText}`;
+  const cached = cacheGet(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  // 3. Prepare the request exactly like the working curl command.
+  const _fetch = await getFetch();
+  
+  // This is the single, correct endpoint provided in your curl command.
+  const apiUrl = "https://translation-api.translate.com/translate/v1/mt";
+
+  // The API requires the data in 'x-www-form-urlencoded' format.
+  // URLSearchParams is the standard way to create this format in JavaScript.
+  const params = new URLSearchParams();
+  params.append('source_language', 'en');
+  params.append('translation_language', 'ar');
+  params.append('text', inputText);
+
   try {
-    // 1. Try the primary, high-quality Google endpoint first.
-    console.log("Attempting translation with Google Translate endpoint...");
-    return await googleTranslate(inputText);
-  } catch (error) {
-    console.warn("Google Translate endpoint failed. Falling back to MyMemory API...");
-    
-    try {
-      // 2. If Google fails, use the reliable MyMemory fallback.
-      return await myMemoryTranslate(inputText);
-    } catch (fallbackError) {
-      console.error("All translation services have failed.", fallbackError.message);
-      // If both services fail, we throw an error to be handled by the controller.
-      throw new Error("The translation service is currently unavailable.");
+    console.log("Attempting translation with the configured translate.com API...");
+
+    const response = await _fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        'accept': '*/*',
+        'x-api-key': apiKey,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRF-TOKEN': '', // Include the empty CSRF token as seen in the curl command
+      },
+      body: params,
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        console.error(`Translate.com API Error (Status: ${response.status}): ${errorBody}`);
+        throw new Error(`The translation API returned an error.`);
     }
+
+    const data = await response.json();
+
+    // Handle official response shapes:
+    // 1) { translation: "...", limit_used, limit_remaining }
+    // 2) { output: { translated_text: "..." } }
+    // 3) legacy/alt: translatedText / translated_text
+    const translatedText =
+      data?.translation ||
+      data?.output?.translated_text ||
+      data?.translatedText ||
+      data?.translated_text;
+
+    if (!translatedText) {
+      console.error("Could not find translated text in the API response:", data);
+      throw new Error("API response did not contain a valid translation.");
+    }
+    
+    // 4. Cache the result and return it.
+    cacheSet(cacheKey, translatedText);
+    return translatedText;
+
+  } catch (error) {
+    console.error("The translation request failed:", error.message);
+    throw new Error("The translation service is currently unavailable.");
   }
 }
 
