@@ -12,5 +12,7 @@ router.post('/', contactController.create);
 router.get('/', auth, contactController.list);
 router.get('/:id', auth, contactController.getById);
 router.delete('/:id', auth, contactController.remove);
+// Admin: send email(s) to contacts
+router.post('/send-email', auth, contactController.sendEmail);
 
 module.exports = router;

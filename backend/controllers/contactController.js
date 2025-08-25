@@ -1,4 +1,5 @@
 const ContactMessage = require('../models/ContactMessage');
+const nodemailer = require('nodemailer');
 
 function formatMongooseError(err) {
   if (err && err.name === 'ValidationError' && err.errors) {
@@ -77,6 +78,56 @@ exports.remove = async (req, res) => {
     return res.json({ message: 'Deleted' });
   } catch (err) {
     console.error('Contact.remove error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Send email(s) (admin protected)
+exports.sendEmail = async (req, res) => {
+  try {
+    const { to, subject, body } = req.body || {};
+    const recipients = Array.isArray(to) ? to.filter(Boolean) : [];
+    if (!recipients.length) return res.status(400).json({ message: 'No recipients provided' });
+    if (!subject || !body) return res.status(400).json({ message: 'Subject and body are required' });
+
+    const user = process.env.EMAIL_USER;
+    const pass = process.env.EMAIL_PASS; // app password recommended
+    if (!user || !pass) {
+      return res.status(500).json({ message: 'Email credentials not configured' });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user, pass },
+    });
+
+    const results = [];
+    for (const recipient of recipients) {
+      try {
+        const info = await transporter.sendMail({
+          from: `CHOC <${user}>`,
+          to: recipient,
+          subject,
+          text: body,
+        });
+        results.push({ recipient, success: true, id: info.messageId });
+      } catch (err) {
+        console.error('Email send error:', recipient, err.message);
+        results.push({ recipient, success: false, error: err.message });
+      }
+    }
+
+    const failed = results.filter(r => !r.success);
+    if (failed.length) {
+      return res.status(207).json({
+        message: 'Some emails failed to send',
+        results,
+      });
+    }
+
+    return res.json({ message: 'Emails sent', results });
+  } catch (err) {
+    console.error('Contact.sendEmail error:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 };
