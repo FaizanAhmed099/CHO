@@ -72,8 +72,13 @@ function fileFilter(req, file, cb) {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
-}); // 5MB
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB per file (aligns with UI message)
+    files: 50, // allow up to 50 files in a single request
+    parts: 1000, // generous cap for total parts (fields + files)
+    fieldSize: 2 * 1024 * 1024, // 2MB per non-file field
+  },
+});
 
 // Expect field name 'logo'
 const uploadClientLogo = upload.single("logo");

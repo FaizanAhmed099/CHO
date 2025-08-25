@@ -460,31 +460,9 @@
     background: #fff;
 }
 
-/* background image (hidden by default) */
-.step-card::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.8); /* smaller by default */
-  width: 80%;
-  height: 80%;
-  background: url(../en/../uploads/manger/choc/logo-bgg.png) no-repeat center center;
-  background-size: contain;
-  opacity: 20%;  /* fully hidden initially */
-  transition: all 0.8s ease; /* smooth fade + zoom */
-  z-index: 1;
-}
-.step-card:hover{
-  border: solid 1px black;
-  border-radius: 50%;
-}
 
 /* On hover → fade in + zoom */
-.step-card:hover::before {
-  opacity: 0.25;  /* visible */
-  transform: translate(-50%, -50%) scale(1); /* zoom in to full size */
-}
+
 
 /* card content */
 .step-card * {
@@ -493,12 +471,8 @@
     transition: opacity 0.6s ease;
 }
 
-/* hover effect */
 
 
-.step-card:hover * {
-    opacity:0 ;  /* content fades out */
-}
   /* Keep text/icons above background */
   .step-card * {
     position: relative;
@@ -520,7 +494,7 @@
 
   .step-card:hover .step-icon img {
     transform: scale(1.5);
-    display: none;
+    
   }
 
   .step-title {
@@ -541,12 +515,14 @@
     border-radius: 2px;
     transition: width 0.3s ease;
   }
-
-  .step-card:hover title:hover .step-underline:hover {
-    width: 120px;
-    display: none;
-   
+  .step-card:hover .step-underline{
+    width: 50px;
   }
+
+  /* .step-card:hover title:hover .step-underline:hover {
+    width: 120px;
+  }
+   */
 
   .step-description {
     font-size: 16px;
@@ -695,9 +671,6 @@
     z-index: -1;
   } */
 
-  .step-card:hover::before {
-    opacity: 1;
-  }
 
 
 
@@ -1613,9 +1586,7 @@
   .wc-content{
     padding: 0px !important;
   }
-  .loading-img{
-    margin: auto;
-  }
+  
   .testimonial-section{
     padding: 10px;
   }
@@ -1821,6 +1792,11 @@
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
+  }
+}
+@media(max-width: 320px){
+  .loading-img{
+    margin: auto !important;
   }
 }
 

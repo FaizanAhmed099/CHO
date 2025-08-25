@@ -44,24 +44,24 @@ document.addEventListener("DOMContentLoaded", function() {
 // Testimonial Slider 
 
 var pictures = [
-  "https://img.freepik.com/free-photo/cheerful-cleaning-lady-with-rubber-gloves-apron-holding-bucket-with-cleaning-supplies-showing-thumbs-up-sign_273609-39089.jpg",
-  "../uploads/testimonial/profile1 (1).jpg",
-  "../uploads/testimonial/profile1 (2).jpg",
-  "../uploads/testimonial/profile1 (3).jpg"
+  "../uploads/testimonial/img4.jpeg",
+  "../uploads/testimonial/img1.jpeg",
+  "../uploads/testimonial/img2.jpeg",
+  "https://www.shutterstock.com/image-photo/positive-handsome-arabic-businessman-beard-600nw-2510267591.jpg"
 ];
 
 var text = [
-  "That's going to be a chunk of change. Make the font bigger I need a website...",
-  "They aim to highlight the most recent advancements and key literature in a particular field.",
-  "Mini-reviews should present information in a clear and easily understandable manner.",
-  "I have an awesome idea for a startup, I need you to build it for me, so in an ideal world"
+  "We took the services of Company haven of cleanliness and were amazed at the spotless results. Every corner was shining, and the freshness was noticeable immediately.",
+  "We are very satisfied with the services of Company haven of cleanliness. The cleanliness standards were high, and their staff was professional and efficient.",
+  "After hiring Company haven of cleanliness, our hotel became spotless and welcoming. They truly set the standard for cleanliness and hygiene",
+  "We took their services for deep cleaning, and the result was excellent. Company haven of cleanliness provided a fresh, healthy, and sparkling environment."
 ];
 
 var user = [
-  "Salvador Adams",
-  "Julia",
-  "Chloe",
-  "Louise"
+  "Mohammed Al Rashid",
+  "Ahmed Khalifa",
+  "Abdullah Hassan",
+  "Omar Saeed"
 ]
 
 let i = 0; // Declare only ONCE at the top of your file
