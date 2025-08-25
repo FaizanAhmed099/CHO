@@ -15,9 +15,9 @@ module.exports = async function (req, res, next) {
       return res.status(500).json({ message: 'Server misconfigured: JWT_SECRET missing' });
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // Ensure token matches the latest stored token for this admin
-    const admin = await Admin.findById(decoded.id).select('token');
-    if (!admin || !admin.token || admin.token !== token) {
+    // Verify the admin exists (but do not enforce single-session by comparing tokens)
+    const admin = await Admin.findById(decoded.id).select('_id');
+    if (!admin) {
       return res.status(401).json({ message: 'Token is not valid' });
     }
     req.user = { id: decoded.id };
