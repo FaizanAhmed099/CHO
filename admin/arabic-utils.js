@@ -15,11 +15,44 @@
     ];
     for (const [re, rep] of digraphs) str = str.replace(re, rep);
     const map = {
-      a: "ا", b: "ب", c: "ك", d: "د", e: "ي", f: "ف", g: "ج", h: "ه",
-      i: "ي", j: "ج", k: "ك", l: "ل", m: "م", n: "ن", o: "و", p: "ب",
-      q: "ق", r: "ر", s: "س", t: "ت", u: "و", v: "ف", w: "و", x: "كس",
-      y: "ي", z: "ز", " ": " "
-    };
+      
+      a: "ا",
+      b: "ب",
+      p: "پ",
+      t: "ت",
+      t_dot: "ٹ",
+      s_th: "ث",
+      j: "ج",
+      ch: "چ",
+      h_dot: "ح",
+      kh: "خ",
+      d: "د",
+      d_dot: "ڈ",
+      z_th: "ذ",
+      r: "ر",
+      r_dot: "ڑ",
+      z: "ز",
+      zh: "ژ",
+      s: "س",
+      sh: "ش",
+      s_saad: "ص",
+      z_zaal: "ض",
+      t_toy: "ط",
+      z_zoay: "ظ",
+      ain: "ع",
+      gh: "غ",
+      f: "ف",
+      q: "ق",
+      k: "ک",
+      g: "گ",
+      l: "ل",
+      m: "م",
+      n: "ن",
+      w: "و",
+      h: "ہ",
+      hamza: "ء",
+      y: "ی",
+      ye: "ے"    };
     let out = "";
     for (const ch of str) {
       const lower = ch.toLowerCase();

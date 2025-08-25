@@ -339,7 +339,14 @@
             </div>
         </div>
     </section>
-        <section class="main-projects-section">
+
+    <!-- Project-Section -->
+    <section class="main-projects-section">
+        <div class="container">
+          <div class="row" id="projectsRow"></div>
+        </div>
+      </section>
+        <!-- <section class="main-projects-section">
             <div class="container">
                 <div class="row">
                         <div class="col-lg-4 col-md-6 col-12 mb-4 wow fadeInUp">
@@ -381,48 +388,10 @@
                                 </a>
                             </div>
                         </div>
-                        <!-- <div class="col-lg-4 col-md-6 col-12 mb-4 wow fadeInUp">
-                            <div class="our-projects-column-wrapper" style="background-image: url('../uploads/projects/Al_Aula_project___new__1_.jpg');background-repeat: no-repeat;background-size: cover;">
-                                <a href="oxagon-warehouse-256945-448436-485326.html" class="p-4">
-                                    <div class="dark-blue-gradient"></div>
-                                    <div class="our-projects-content-area">
-                                        <span class="project-category-title" aria-label="category-text">Ground Handling</span>
-                                        <h4 aria-label="title-text">Early Works &amp; Site Readiness for Marriott Autograph - Al Ula</h4>
-                                        <span class="project-status-small" aria-label="status-text"> Ongoing Projects </span>
-                                        <span class="icon-pattern-ver"></span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div> -->
-                        <!-- <div class="col-lg-4 col-md-6 col-12 mb-4 wow fadeInUp">
-                            <div class="our-projects-column-wrapper" style="background-image: url('../uploads/projects/sFacility_Management_Building.jpg');background-repeat: no-repeat;background-size: cover;">
-                                <a href="sheybarah-south-hotel-h10-non-osm-foh-package-418580-866743-742018-194162-841803-252138.html" class="p-4">
-                                    <div class="dark-blue-gradient"></div>
-                                    <div class="our-projects-content-area">
-                                        <span class="project-category-title" aria-label="category-text">Facility Management</span>
-                                        <h4 aria-label="title-text">Facility Management &amp; Ancillary Buildings at Shura Island</h4>
-                                        <span class="project-status-small" aria-label="status-text"> Ongoing Projects </span>
-                                        <span class="icon-pattern-ver"></span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div> -->
-                        <!-- <div class="col-lg-4 col-md-6 col-12 mb-4 wow fadeInUp">
-                            <div class="our-projects-column-wrapper" style="background-image: url('../uploads/projects/s_red_Sea___113___Shura_Golf_Villas___Ancillary_Buildings_Masonary_Work___1_.png');background-repeat: no-repeat;background-size: cover;">
-                                <a href="sheybarah-south-hotel-h10-non-osm-foh-package-418580-866743-742018-194162-841803-975903.html" class="p-4">
-                                    <div class="dark-blue-gradient"></div>
-                                    <div class="our-projects-content-area">
-                                        <span class="project-category-title" aria-label="category-text">Engineering and construction management </span>
-                                        <h4 aria-label="title-text"> Shura Golf Villas &amp; Ancillary Buildings masonry </h4>
-                                        <span class="project-status-small" aria-label="status-text"> Ongoing Projects </span>
-                                        <span class="icon-pattern-ver"></span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div> -->
+    
                 </div>
             </div>
-        </section>
+        </section> -->
     <!-- <div class="row">
         <div class="col-12">
             <div class="pagination-container" aria-label="select-pagination">
@@ -1026,6 +995,48 @@
         });
         //VIEWPORT SCRIPT ENDS
     </script>
+
+
+    <!-- Project-Section -->
+    <script>
+        async function loadProjects() {
+          try {
+            const response = await fetch("http://localhost:5000/api/projects");
+            const projects = await response.json();
+      
+            const container = document.getElementById("projectsRow");
+            container.innerHTML = ""; // clear old
+      
+            projects.forEach(proj => {
+              const imageUrl = `http://localhost:5000${proj.image}`; // prepend base URL
+      
+              const projectHTML = `
+                <div class="col-lg-4 col-md-6 col-12 mb-4 wow fadeInUp">
+                  <div class="our-projects-column-wrapper"
+                       style="background-image: url('${imageUrl}'); background-repeat: no-repeat; background-size: cover;">
+                    <a href="#" class="p-4">
+                      <div class="dark-blue-gradient"></div>
+                      <div class="our-projects-content-area">
+                        <span class="project-category-title" aria-label="category-text">${proj.category}</span>
+                        <h4 aria-label="title-text">${proj.title}</h4>
+                        <span class="project-status-small" aria-label="status-text">${proj.status}</span>
+                        <span class="icon-pattern-ver"></span>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              `;
+              container.insertAdjacentHTML("beforeend", projectHTML);
+            });
+          } catch (err) {
+            console.error("Error fetching projects:", err);
+          }
+        }
+      
+        loadProjects();
+      </script>
+      <!-- Project-Section -->
+      
 </body>
 
 <!-- Mirrored from tamimicontracting.com/en/projects by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 07 Jul 2025 13:15:48 GMT -->
