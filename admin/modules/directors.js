@@ -28,7 +28,13 @@ window.DirectorsModule = (function () {
     _lastTranslateAt = Date.now();
   }
   // Use shared Arabic utils
-  const { hasArabic: _hasArabic, transliterateToArabic: _transliterateToArabic } = window.ArabicUtils || { hasArabic: () => false, transliterateToArabic: (s) => s };
+  const {
+    hasArabic: _hasArabic,
+    transliterateToArabic: _transliterateToArabic,
+  } = window.ArabicUtils || {
+    hasArabic: () => false,
+    transliterateToArabic: (s) => s,
+  };
 
   // Debounce helper for slug-like live autofill
   const _debounce = (fn, wait = 300) => {
@@ -48,9 +54,10 @@ window.DirectorsModule = (function () {
 
   // Lightweight confirm modal (shared across modules via #confirmModal)
   function ensureConfirmModal() {
-    if (document.querySelector('#confirmModal')) return document.querySelector('#confirmModal');
-    const modal = document.createElement('div');
-    modal.id = 'confirmModal';
+    if (document.querySelector("#confirmModal"))
+      return document.querySelector("#confirmModal");
+    const modal = document.createElement("div");
+    modal.id = "confirmModal";
     modal.innerHTML = `
       <div class="modal fade" style="display:none" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -73,49 +80,58 @@ window.DirectorsModule = (function () {
     return modal;
   }
 
-  function showConfirmModal(message, { title = 'Confirm', confirmText = 'Confirm', confirmClass = 'btn-danger' } = {}) {
+  function showConfirmModal(
+    message,
+    {
+      title = "Confirm",
+      confirmText = "Confirm",
+      confirmClass = "btn-danger",
+    } = {}
+  ) {
     return new Promise((resolve) => {
       const root = ensureConfirmModal();
-      const wrap = root.querySelector('.modal');
-      const backdrop = root.querySelector('.modal-backdrop');
-      root.querySelector('.modal-title').textContent = title;
-      root.querySelector('#confirmModalMessage').textContent = message;
-      const btnConfirm = root.querySelector('[data-confirm]');
-      const btnCancel = root.querySelector('[data-cancel]');
-      const btnClose = root.querySelector('[data-dismiss]');
-      btnConfirm.className = 'btn ' + confirmClass;
+      const wrap = root.querySelector(".modal");
+      const backdrop = root.querySelector(".modal-backdrop");
+      root.querySelector(".modal-title").textContent = title;
+      root.querySelector("#confirmModalMessage").textContent = message;
+      const btnConfirm = root.querySelector("[data-confirm]");
+      const btnCancel = root.querySelector("[data-cancel]");
+      const btnClose = root.querySelector("[data-dismiss]");
+      btnConfirm.className = "btn " + confirmClass;
       btnConfirm.textContent = confirmText;
 
       const close = (val) => {
-        wrap.classList.remove('show');
-        backdrop.classList.remove('show');
+        wrap.classList.remove("show");
+        backdrop.classList.remove("show");
         setTimeout(() => {
-          wrap.style.display = 'none';
-          backdrop.style.display = 'none';
+          wrap.style.display = "none";
+          backdrop.style.display = "none";
           cleanup();
           resolve(val);
         }, 150);
       };
       const onConfirm = () => close(true);
       const onCancel = () => close(false);
-      const onKey = (e) => { if (e.key === 'Escape') onCancel(); };
+      const onKey = (e) => {
+        if (e.key === "Escape") onCancel();
+      };
       const cleanup = () => {
-        btnConfirm.removeEventListener('click', onConfirm);
-        btnCancel.removeEventListener('click', onCancel);
-        btnClose.removeEventListener('click', onCancel);
-        document.removeEventListener('keydown', onKey);
+        btnConfirm.removeEventListener("click", onConfirm);
+        btnCancel.removeEventListener("click", onCancel);
+        btnClose.removeEventListener("click", onCancel);
+        document.removeEventListener("keydown", onKey);
       };
 
-      btnConfirm.addEventListener('click', onConfirm);
-      btnCancel.addEventListener('click', onCancel);
-      btnClose.addEventListener('click', onCancel);
-      document.addEventListener('keydown', onKey);
+      btnConfirm.addEventListener("click", onConfirm);
+      btnCancel.addEventListener("click", onCancel);
+      btnClose.addEventListener("click", onCancel);
+      document.addEventListener("keydown", onKey);
 
-      wrap.style.display = 'block';
-      backdrop.style.display = 'block';
+      wrap.style.display = "block";
+      backdrop.style.display = "block";
       requestAnimationFrame(() => {
-        wrap.classList.add('show');
-        backdrop.classList.add('show');
+        wrap.classList.add("show");
+        backdrop.classList.add("show");
       });
     });
   }
@@ -186,11 +202,11 @@ window.DirectorsModule = (function () {
                     <div class="col-md-4">
                         <div class="mb-3"><label for="nameAr" class="form-label">Name (Arabic)</label><input type="text" class="form-control" id="nameAr" name="nameAr" value="${
                           data.nameAr || ""
-                        }" placeholder="Auto-translates on blur"></div>
+                        }" placeholder="Auto-translates"></div>
                         <div class="mb-3"><label for="roleAr" class="form-label">Role (Arabic)</label><input type="text" class="form-control" id="roleAr" name="roleAr" value="${
                           data.roleAr || ""
-                        }" placeholder="Auto-translates on blur"></div>
-                        <div class="mb-3"><label for="bioAr" class="form-label">Biography (Arabic)</label><textarea class="form-control" id="bioAr" name="bioAr" rows="6" placeholder="Auto-translates on blur">${
+                        }" placeholder="Auto-translates"></div>
+                        <div class="mb-3"><label for="bioAr" class="form-label">Biography (Arabic)</label><textarea class="form-control" id="bioAr" name="bioAr" rows="6" placeholder="Auto-translates">${
                           data.bioAr || ""
                         }</textarea></div>
                     </div>
@@ -252,7 +268,10 @@ window.DirectorsModule = (function () {
           } else {
             director.isActive = checked;
           }
-          toast(`Director marked ${checked ? 'Active' : 'Inactive'}.`, "success");
+          toast(
+            `Director marked ${checked ? "Active" : "Inactive"}.`,
+            "success"
+          );
           renderList();
         } catch (err) {
           // revert UI on error
@@ -290,7 +309,11 @@ window.DirectorsModule = (function () {
     const translateField = async (sourceElement, targetElement) => {
       const textToTranslate = sourceElement.value.trim();
       const allowUpgrade = targetElement.dataset.autofill === "1"; // upgrade transliteration
-      if (textToTranslate && (!targetElement.value.trim() || allowUpgrade) && targetElement.dataset.manual !== "1") {
+      if (
+        textToTranslate &&
+        (!targetElement.value.trim() || allowUpgrade) &&
+        targetElement.dataset.manual !== "1"
+      ) {
         if (targetElement.dataset.translating === "1") return; // prevent concurrent calls on same target
         targetElement.dataset.translating = "1";
         targetElement.classList.add("is-translating");
@@ -376,7 +399,9 @@ window.DirectorsModule = (function () {
       }, 300);
       sourceEl.addEventListener("input", updateAuto);
       // On blur, try to upgrade via backend translation
-      sourceEl.addEventListener("blur", () => translateField(sourceEl, targetEl));
+      sourceEl.addEventListener("blur", () =>
+        translateField(sourceEl, targetEl)
+      );
     }
     // Enable live transliteration + upgrade on blur via backend
     bindAutoArabic(nameInput, nameArInput);
@@ -483,7 +508,14 @@ window.DirectorsModule = (function () {
   }
 
   async function handleDelete(id) {
-    const ok = await showConfirmModal('Are you sure you want to delete this director?', { title: 'Delete Director', confirmText: 'Delete', confirmClass: 'btn-danger' });
+    const ok = await showConfirmModal(
+      "Are you sure you want to delete this director?",
+      {
+        title: "Delete Director",
+        confirmText: "Delete",
+        confirmClass: "btn-danger",
+      }
+    );
     if (!ok) return;
     try {
       await apiJson(`/api/directors/${id}`, { method: "DELETE" });

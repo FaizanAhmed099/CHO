@@ -84,11 +84,11 @@ window.App = (function () {
               <h3 class="text-center mb-4">Admin Panel</h3>
               <form id="loginForm">
                 <div class="form-floating mb-3">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" required />
+                  <input type="email" value="admin@example.com" class="form-control" name="email" id="email" placeholder="name@example.com" required />
                   <label for="email">Email address</label>
                 </div>
                 <div class="form-floating mb-4">
-                  <input type="password" class="form-control" name="password" id="password" placeholder="Password" required />
+                  <input type="password" value="password123" class="form-control" name="password" id="password" placeholder="Password" required />
                   <label for="password">Password</label>
                 </div>
                 <button class="btn btn-primary w-100 btn-lg" type="submit">Sign In</button>
