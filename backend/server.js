@@ -7,6 +7,7 @@ const { toArabic } = require("./utils/translate");
 
 const express = require("express");
 const cors = require("cors");
+const multer = require("multer");
 const connectDB = require("./config/db");
 const adminRoutes = require("./routes/adminRoutes");
 const clientsRoutes = require("./routes/clientsRoutes");
@@ -63,6 +64,20 @@ app.use("/api/projects", projectsRoutes);
 app.use("/api/directors", directorsRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/bulk-images", bulkImagesRoutes);
+
+// Centralized Multer error handler
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      const maxMb = Number(process.env.UPLOAD_MAX_FILE_MB || 50);
+      return res
+        .status(413)
+        .json({ message: `File too large. Max allowed is ${maxMb}MB per file.` });
+    }
+    return res.status(400).json({ message: err.message, code: err.code });
+  }
+  next(err);
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

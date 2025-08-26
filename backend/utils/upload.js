@@ -69,14 +69,20 @@ function fileFilter(req, file, cb) {
   cb(new Error("Only image files are allowed"));
 }
 
+// Limits (configurable via env)
+const MAX_FILE_MB = Number(process.env.UPLOAD_MAX_FILE_MB || 50); // default 25MB
+const MAX_FILES = Number(process.env.UPLOAD_MAX_FILES || 50);
+const MAX_PARTS = Number(process.env.UPLOAD_MAX_PARTS || 1000);
+const MAX_FIELD_MB = Number(process.env.UPLOAD_MAX_FIELD_MB || 2);
+
 const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB per file (aligns with UI message)
-    files: 50, // allow up to 50 files in a single request
-    parts: 1000, // generous cap for total parts (fields + files)
-    fieldSize: 2 * 1024 * 1024, // 2MB per non-file field
+    fileSize: MAX_FILE_MB * 1024 * 1024,
+    files: MAX_FILES,
+    parts: MAX_PARTS,
+    fieldSize: MAX_FIELD_MB * 1024 * 1024,
   },
 });
 
