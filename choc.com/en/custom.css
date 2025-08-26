@@ -1467,112 +1467,79 @@
 /* Media-Page */
 
 /* Imges-Section Start */
-/* Use true CSS Grid so span classes work reliably; add !important to override Bootstrap */
-body .grid-wrapper {
-  display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important; /* desktop: 4 columns */
-  grid-auto-rows: 8px !important; /* fine row unit for precise spans */
-  grid-auto-flow: dense !important; /* pack items tightly to reduce gaps */
-  gap: 12px !important;
-  width: 100% !important;
+.grid-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-auto-rows: 200px;
+  grid-auto-flow: dense;
+  gap: 15px;
 }
 
-body .grid-wrapper .grid-item {
-  position: relative !important;
-  width: 100% !important;
-  height: auto !important;
-  overflow: hidden; /* keep hover borders inside */
-}
-
-/* Make images fill their grid cells cleanly */
-body .grid-wrapper .grid-item img {
-  display: block !important;
-  width: 100% !important;
-  height: auto !important; /* keep intrinsic aspect ratio */
+.grid-item {
   position: relative;
-  z-index: 1;
-  object-fit: cover !important;
-  border-radius: 0px !important;
+  overflow: hidden;
+  border-radius: 0px;
 }
 
-/* Span classes */
-body .grid-wrapper .grid-item.wide {
-  grid-column: span 2 !important;
-}
-body .grid-wrapper .grid-item.tall {
-  grid-row: span 2 !important;
-}
-body .grid-wrapper .grid-item.big {
-  grid-column: span 2 !important;
-  grid-row: span 2 !important;
+.grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 0px;
 }
 
-/* Tablet view */
-@media (max-width: 1024px) {
-  body .grid-wrapper {
-    grid-template-columns: repeat(3, 1fr) !important; /* tablet: 3 columns */
-    grid-auto-rows: 8px !important;
-  }
+.grid-item.wide {
+  grid-column: span 2;
 }
 
-/* Mobile view */
-@media (max-width: 768px) {
-  body .grid-wrapper {
-    grid-template-columns: repeat(2, 1fr) !important; /* mobile: 2 columns */
-    grid-auto-rows: 9px !important;
-  }
-  /* Collapse spans on smaller screens for a tighter layout */
-  body .grid-wrapper .grid-item.wide,
-  body .grid-wrapper .grid-item.big {
-    grid-column: span 1 !important;
-  }
-  body .grid-wrapper .grid-item.tall,
-  body .grid-wrapper .grid-item.big {
-    grid-row: span 1 !important;
-  }
+.grid-item.tall {
+  grid-row: span 2;
 }
 
-/* Small screens (425px, 375px, 320px) */
-@media (max-width: 425px) {
-  body .grid-wrapper {
-    grid-template-columns: repeat(2, 1fr) !important;
-    grid-auto-rows: 10px !important;
-  }
+.grid-item.big {
+  grid-column: span 2;
+  grid-row: span 2;
 }
 
 /* Hover Border */
-body .grid-wrapper .grid-item::before,
-body .grid-wrapper .grid-item::after {
+.grid-item::before,
+.grid-item::after {
   content: "";
   position: absolute;
   width: 0%;
   height: 0%;
   opacity: 0;
-  z-index: 2;
-  pointer-events: none; /* do not block image interactions */
-  transition: width 0.2s linear, height 0.15s 0.2s ease-out, opacity 0s 0.35s;
+  pointer-events: none;
+  transition:
+    width 0.2s linear,
+    height 0.15s 0.2s ease-out,
+    opacity 0s 0.35s;
 }
 
-body .grid-wrapper .grid-item::before {
+.grid-item::before {
   bottom: 0;
   left: 0;
   border-left: 4px solid #f9b621;
   border-top: 4px solid #f9b621;
 }
 
-body .grid-wrapper .grid-item::after {
+.grid-item::after {
   top: 0;
   right: 0;
   border-right: 4px solid #f9b621;
   border-bottom: 4px solid #f9b621;
 }
 
-body .grid-wrapper .grid-item:hover::before,
-body .grid-wrapper .grid-item:hover::after {
+.grid-item:hover::before,
+.grid-item:hover::after {
   width: 100%;
   height: 100%;
   opacity: 1;
-  transition: width 0.2s 0.15s ease-out, height 0.15s ease-in, opacity 0s;
+  transition:
+    width 0.2s 0.15s ease-out,
+    height 0.15s ease-in,
+    opacity 0s;
 }
 @keyframes fadeInUp {
   0% {
@@ -1585,15 +1552,67 @@ body .grid-wrapper .grid-item:hover::after {
   }
 }
 
-body .grid-wrapper .grid-item {
-  opacity: 1;
+.grid-item {
+  opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-body .grid-wrapper .grid-item.animate {
+.grid-item.animate {
   animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
+/* Tablet (≤ 768px) */
+@media (max-width: 768px) {
+  .grid-wrapper {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-auto-rows: 180px;
+    gap: 12px;
+  }
+}
+
+/* Mobile (≤ 425px) */
+@media (max-width: 425px) {
+  .grid-wrapper {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    grid-auto-rows: 150px;
+    gap: 10px;
+  }
+
+  .grid-item.wide,
+  .grid-item.big {
+    grid-column: span 2; /* still spans full width */
+  }
+}
+
+/* Small Mobile (≤ 375px) */
+@media (max-width: 375px) {
+  .grid-wrapper {
+    grid-template-columns: 1fr; /* single column */
+    grid-auto-rows: auto;
+    gap: 8px;
+  }
+
+  .grid-item.wide,
+  .grid-item.tall,
+  .grid-item.big {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
+
+/* Extra Small (≤ 320px) */
+@media (max-width: 320px) {
+  .grid-wrapper {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    gap: 6px;
+  }
+
+  .grid-item img {
+    height: auto; /* prevents image cutoff */
+  }
+}
+
 
 /* .step-card:hover{
     width: 170px;
