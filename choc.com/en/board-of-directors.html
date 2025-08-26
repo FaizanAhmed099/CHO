@@ -2455,7 +2455,7 @@
                   </a>
                 </div>
               `;
-            directorsContainer.insertAdjacentHTML("afterbegin", directorHTML);
+            directorsContainer.insertAdjacentHTML("beforeend", directorHTML);
           });
         } catch (err) {
           console.error("Error fetching directors:", err);

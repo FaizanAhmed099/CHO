@@ -1809,6 +1809,12 @@ body .grid-wrapper .grid-item.animate {
     justify-content: space-around;
     flex-wrap: wrap;
   }
+  .experience-counter-box{
+    padding: 12px 20px;
+  }
+  .cta-button{
+    padding: 8px 13px;
+  }
   /* .loading-img{
     margin-right: auto !important;
   } */
@@ -1818,6 +1824,36 @@ body .grid-wrapper .grid-item.animate {
     margin: auto !important;
   }
 }
+
+/* General button styling */
+.all-services-btn {
+  display: inline-block;      /* shrink to content */
+  padding: 10px 20px;         /* spacing inside */
+  border: 1px solid #d4a11c;  /* gold border */
+  background: transparent;    /* transparent bg */
+  color: #fff;                /* text color */
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 0px;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.all-services-btn:hover {
+  background: #d4a11c;
+  color: #000;
+}
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+  .all-services-btn {
+    display: block;           /* take full width */
+    width: fit-content;       /* shrink to text */
+    margin: 10px auto;        /* center it */
+    text-align: center;
+  }
+}
+
 
 /* div.wrapper{
   display:flex;
