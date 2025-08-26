@@ -258,6 +258,7 @@
       flex-direction: column;
       align-items: flex-start;
     }
+    
   }
   
   /* .experience-box {
@@ -1501,6 +1502,7 @@
   .grid-wrapper {
     column-count: 2;
   }
+
 }
 
 
@@ -1779,6 +1781,9 @@
   .stat-label{
     font-size: 25px;
   }
+  /* .loading-img{
+    margin-right: auto !important;
+  } */
 
 }
 @media(max-width: 425px){
@@ -1795,13 +1800,15 @@
     justify-content: space-around;
     flex-wrap: wrap;
   }
+  /* .loading-img{
+    margin-right: auto !important;
+  } */
 }
-@media(max-width: 320px){
+/* @media(max-width: 320px){
   .loading-img{
     margin: auto !important;
   }
-}
-
+} */
 
 
 
