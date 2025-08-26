@@ -20,6 +20,23 @@ function slugify(input) {
     .replace(/-+/g, '-');
 }
 
+// Ensure slug is unique by appending -2, -3, ... if needed
+async function generateUniqueSlug(desired, excludeId = null) {
+  let base = slugify(desired);
+  if (!base) return '';
+  let unique = base;
+  let i = 2;
+  // loop until a unique slug is found
+  // exclude a specific id when updating
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const q = excludeId ? { slug: unique, _id: { $ne: excludeId } } : { slug: unique };
+    const exists = await Director.findOne(q).select('_id').lean();
+    if (!exists) return unique;
+    unique = `${base}-${i++}`;
+  }
+}
+
 // Create (admin)
 exports.create = async (req, res) => {
   try {
@@ -31,13 +48,13 @@ exports.create = async (req, res) => {
     if (!role) errors.push('Role is required');
     if (!imagePath) errors.push('Image is required');
 
-    const finalSlug = slug ? slugify(slug) : slugify(name);
-    if (!finalSlug) errors.push('Slug could not be generated');
+    const desiredSlug = slug ? slugify(slug) : slugify(name);
+    if (!desiredSlug) errors.push('Slug could not be generated');
 
     if (errors.length) return res.status(400).json({ message: 'Validation failed', errors });
 
-    const exists = await Director.findOne({ slug: finalSlug });
-    if (exists) return res.status(400).json({ message: 'Validation failed', errors: ['Slug already exists'] });
+    // Always allocate a unique slug to avoid collisions on same names
+    const finalSlug = await generateUniqueSlug(desiredSlug);
 
     // Uniqueness: Only one CEO and one Chairman (Chairman does not include Vice Chairman)
     const roleLc = String(role).toLowerCase();
@@ -177,10 +194,9 @@ exports.update = async (req, res) => {
       updates.bioAr = await toArabic(updates.bio || existing.bio);
     }
 
-    // ensure slug uniqueness
+    // ensure slug uniqueness: auto-allocate a unique one if taken
     if (updates.slug && updates.slug !== existing.slug) {
-      const taken = await Director.findOne({ slug: updates.slug, _id: { $ne: id } });
-      if (taken) return res.status(400).json({ message: 'Validation failed', errors: ['Slug already exists'] });
+      updates.slug = await generateUniqueSlug(updates.slug, id);
     }
 
     // Uniqueness on roles: only one CEO and one Chairman (Chairman not including Vice Chairman)

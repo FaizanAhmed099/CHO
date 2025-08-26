@@ -10,7 +10,7 @@ const DirectorSchema = new mongoose.Schema(
     bio: { type: String, default: '' },
     bioAr: { type: String, default: '' },
     image: { type: String, required: true }, // URL or /uploads/directors/<file>
-    slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    slug: { type: String, required: true, lowercase: true, trim: true },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true, collection: 'directors' }

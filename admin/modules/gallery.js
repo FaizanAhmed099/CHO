@@ -162,16 +162,24 @@ window.GalleryModule = (function () {
       form = $("#uploadForm"),
       submitBtn = form.querySelector('[type="submit"]');
     let files = [];
+    let previewUrls = [];
     $("#backBtn").addEventListener("click", render);
     const handleFiles = (newFiles) => {
-      files.push(
-        ...Array.from(newFiles).filter((f) => f.type.startsWith("image/"))
-      );
-      if (files.length > 50) {
+      const incoming = Array.from(newFiles).filter((f) => f.type.startsWith("image/"));
+      if (incoming.length === 0) return;
+      ensurePreviewUI();
+      const remainingSlots = 50 - files.length;
+      const toAdd = incoming.slice(0, Math.max(0, remainingSlots));
+      if (incoming.length > toAdd.length) {
         toast("You can upload up to 50 images at a time. Extra files were ignored.", "warning");
-        files = files.slice(0, 50);
       }
-      renderPreviews();
+      const startIndex = files.length;
+      toAdd.forEach((file, offset) => {
+        const idx = startIndex + offset;
+        files.push(file);
+        addPreview(file, idx);
+      });
+      updateCounts();
       submitBtn.disabled = files.length === 0;
     };
     dz.addEventListener("click", () => input.click());
@@ -186,21 +194,88 @@ window.GalleryModule = (function () {
       handleFiles(e.dataTransfer.files);
     });
     input.addEventListener("change", () => handleFiles(input.files));
-    function renderPreviews() {
-      previewArea.innerHTML =
-        files.length > 0
-          ? `<p><strong>${
-              files.length
-            }</strong> files selected:</p><div class="d-flex flex-wrap gap-2">${files
-              .map(
-                (f) =>
-                  `<img src="${URL.createObjectURL(
-                    f
-                  )}" style="width: 80px; height: 80px; object-fit: cover; border-radius: .25rem;">`
-              )
-              .join("")}</div>`
-          : "";
+
+    function ensurePreviewUI() {
+      if (previewArea.dataset.ready) return;
+      previewArea.dataset.ready = "1";
+      previewArea.innerHTML = `
+        <p>\n          <strong id="previewCount">0</strong> files :\n        </p>
+        <div id="previewGrid" class="d-flex flex-wrap gap-2"></div>
+      `;
     }
+
+    function updateCounts() {
+      const cnt = previewArea.querySelector('#previewCount');
+      if (cnt) cnt.textContent = String(files.length);
+    }
+
+    function addPreview(file, index) {
+      const grid = previewArea.querySelector('#previewGrid');
+      if (!grid) return;
+      const url = URL.createObjectURL(file);
+      previewUrls[index] = url;
+      const wrap = document.createElement('div');
+      wrap.className = 'position-relative';
+      wrap.style.width = '80px';
+      wrap.style.height = '80px';
+      wrap.style.borderRadius = '.25rem';
+      wrap.style.overflow = 'hidden';
+      // Smooth add transition
+      wrap.style.opacity = '0';
+      wrap.style.transform = 'scale(0.98)';
+      wrap.style.transition = 'opacity 150ms ease, transform 150ms ease';
+      wrap.dataset.index = String(index);
+      wrap.innerHTML = `
+        <img src="${url}" alt="preview ${index + 1}" style="width:100%; height:100%; object-fit:cover;">
+        <button type="button" class="remove-preview btn btn-sm btn-danger" data-index="${index}"
+          style="position:absolute; top:2px; right:2px; line-height:1; padding:0 .35rem; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center;">
+          &times;
+        </button>`;
+      grid.appendChild(wrap);
+      requestAnimationFrame(() => {
+        wrap.style.opacity = '1';
+        wrap.style.transform = 'scale(1)';
+      });
+    }
+
+    // Handle click on remove (X) button
+    previewArea.addEventListener("click", (e) => {
+      const btn = e.target.closest('.remove-preview');
+      if (!btn) return;
+      const idx = Number(btn.dataset.index);
+      if (Number.isNaN(idx)) return;
+      // Defer revocation until after animation completes
+      const urlToRevoke = previewUrls[idx];
+      files.splice(idx, 1);
+      previewUrls.splice(idx, 1);
+      // Animate out, then remove and reindex
+      const grid = previewArea.querySelector('#previewGrid');
+      const node = grid?.querySelector(`.position-relative[data-index="${idx}"]`);
+      if (node) {
+        node.style.opacity = '0';
+        node.style.transform = 'scale(0.98)';
+        const onEnd = () => {
+          node.removeEventListener('transitionend', onEnd);
+          node.remove();
+          // Revoke after node removal to avoid visual flicker
+          try { if (urlToRevoke) URL.revokeObjectURL(urlToRevoke); } catch (_) {}
+          const nodes = grid?.querySelectorAll('.position-relative') || [];
+          nodes.forEach((el, newIdx) => {
+            el.dataset.index = String(newIdx);
+            const btn = el.querySelector('.remove-preview');
+            if (btn) btn.setAttribute('data-index', String(newIdx));
+          });
+          updateCounts();
+          submitBtn.disabled = files.length === 0;
+        };
+        node.addEventListener('transitionend', onEnd, { once: true });
+      } else {
+        // Fallback if node not found
+        try { if (urlToRevoke) URL.revokeObjectURL(urlToRevoke); } catch (_) {}
+        updateCounts();
+        submitBtn.disabled = files.length === 0;
+      }
+    });
     form.addEventListener(
       "submit",
       preventDuplicateSubmission(form, async () => {
@@ -214,6 +289,10 @@ window.GalleryModule = (function () {
         try {
           await apiForm("/api/bulk-images", fd, { method: "POST" });
           toast(`${files.length} images uploaded!`, "success");
+          // Cleanup preview URLs
+          if (previewUrls.length) {
+            previewUrls.forEach((u) => { try { URL.revokeObjectURL(u); } catch (_) {} });
+          }
           render();
         } catch (err) {
           toast(err.message, "error");

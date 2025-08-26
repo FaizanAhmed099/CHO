@@ -465,7 +465,10 @@
     <div class="text-center mt-5">
       <h1 class="Gallary">Gallary</h1>
     </div>
-    <!-- <div class="grid-wrapper mt-5 mb-5" id="galleryGrid">
+
+
+
+    <!-- <div class="grid-wrapper mt-5 mb-5">
       <div class="grid-item">
         <img src="../uploads/manger/choc/cleaning-1.jpg" alt="Image 1" />
       </div>
@@ -584,8 +587,62 @@
         <img src="../uploads/choc/choc-5.jpeg" alt="" />
       </div>
     </div> -->
+    <div class="grid-wrapper mt-5 mb-5"></div>
+    <script>
+      (function () {
+        const container = document.querySelector(".grid-wrapper");
+        if (!container) return;
 
-    <div class="grid-wrapper mt-5 mb-5"></div> 
+        const isLocal =
+          location.hostname === "localhost" ||
+          location.hostname === "127.0.0.1";
+        const API_BASE = isLocal ? "http://localhost:5000" : "";
+
+        fetch(`${API_BASE}/api/bulk-images`)
+          .then((r) => r.json())
+          .then((data) => {
+            if (!Array.isArray(data)) return;
+            // Transform BulkImages documents -> flat list of image items
+            // Each doc: { images: [{ url, isActive, createdAt, _id }, ...] }
+            const items = data
+              .flatMap((doc) => (Array.isArray(doc?.images) ? doc.images : []))
+              .filter((it) => it && it.isActive !== false);
+            if (!items.length) return;
+            const modifiers = ["wide", "tall", "big"];
+            let modIndex = 0;
+            let sinceMod = 0;
+            let gap = 1; // after 1 or 2 images, place a modifier
+
+            const frag = document.createDocumentFragment();
+            items.forEach((it, idx) => {
+              const wrap = document.createElement("div");
+              wrap.className = "grid-item";
+
+              sinceMod++;
+              if (sinceMod >= gap) {
+                const mod = modifiers[modIndex % modifiers.length];
+                wrap.classList.add(mod);
+                modIndex++;
+                sinceMod = 0;
+                gap = 1 + Math.floor(Math.random() * 2); // 1 or 2
+              }
+
+              const img = document.createElement("img");
+              const src = it.image || it.url || "";
+              img.src = `${API_BASE}${src}`;
+              img.alt = it.alt || it.title || `Gallery image ${idx + 1}`;
+              wrap.appendChild(img);
+              frag.appendChild(wrap);
+            });
+
+            container.innerHTML = "";
+            container.appendChild(frag);
+          })
+          .catch((err) => {
+            console.error("Failed to load gallery:", err);
+          });
+      })();
+    </script>
 
     <!-- <div class="main-content-wrapper">
         
@@ -2224,196 +2281,6 @@ Our Sacred Space Stewardship Program has revolutionized maintenance in places of
         });
       });
       //VIEWPORT SCRIPT ENDS
-    </script>
-
-    <script>
-      // Compute and set the appropriate grid row span for an item based on its image height
-      function setRowSpan(item, container) {
-        if (!item) return;
-        const styles = window.getComputedStyle(container);
-        const rowHeight = parseFloat(styles.getPropertyValue("grid-auto-rows")) || 8;
-        const gap = parseFloat(
-          styles.getPropertyValue("row-gap") ||
-            styles.getPropertyValue("grid-row-gap") ||
-            styles.getPropertyValue("gap") ||
-            0
-        );
-        const img = item.querySelector("img");
-        if (!img) return;
-
-        // Prefer actual rendered image height; if 0, fallback to natural ratio * column width
-        let imgHeight = img.getBoundingClientRect().height;
-        if (!imgHeight) {
-          const colWidth = item.getBoundingClientRect().width || container.getBoundingClientRect().width;
-          const ratio = (img.naturalHeight && img.naturalWidth) ? img.naturalHeight / img.naturalWidth : 0.75;
-          imgHeight = colWidth * ratio;
-          if (!imgHeight) {
-            // If still not measurable, try again on next frame
-            requestAnimationFrame(() => setRowSpan(item, container));
-            return;
-          }
-        }
-
-        let effectiveHeight = imgHeight;
-        // Allow row span modifiers to influence height as intended
-        // Make tall and big a bit larger vertically
-        if (item.classList.contains("tall")) effectiveHeight *= 2.5;
-        if (item.classList.contains("big")) effectiveHeight *= 2.2;
-
-        const span = Math.max(1, Math.ceil((effectiveHeight + gap) / (rowHeight + gap)));
-        item.style.gridRowEnd = `span ${span}`;
-      }
-
-      // Debounce helper for resize
-      function debounce(fn, wait = 150) {
-        let t;
-        return function (...args) {
-          clearTimeout(t);
-          t = setTimeout(() => fn.apply(this, args), wait);
-        };
-      }
-
-      // Make the last visual row items stretch to form a full line
-      function balanceLastRow(container) {
-        if (!container) return;
-        const styles = window.getComputedStyle(container);
-        const cols = (styles.getPropertyValue("grid-template-columns") || "")
-          .split(" ")
-          .filter(Boolean).length;
-        if (!cols || cols <= 1) return; // nothing to balance
-
-        const items = Array.from(container.querySelectorAll(".grid-item"));
-        if (!items.length) return;
-
-        // Clear any previous overrides
-        items.forEach((it) => (it.style.gridColumnEnd = ""));
-
-        // Find last row by visual position
-        const tops = items
-          .filter((it) => it.style.visibility !== "hidden")
-          .map((it) => it.getBoundingClientRect().top);
-        if (!tops.length) return;
-        const maxTop = Math.max(...tops);
-        const lastRow = items.filter(
-          (it) => it.style.visibility !== "hidden" && Math.abs(it.getBoundingClientRect().top - maxTop) < 2
-        );
-
-        if (lastRow.length === 0) return;
-
-        // If last row count already equals columns, do nothing
-        if (lastRow.length >= cols) return;
-
-        // Distribute remaining columns evenly across last row items (prefer non-wide/big)
-        const remaining = cols; // we'll set explicit spans that together fill the row
-        const base = Math.floor(remaining / lastRow.length);
-        let extra = remaining % lastRow.length;
-        lastRow.forEach((it) => {
-          let span = base + (extra > 0 ? 1 : 0);
-          extra = Math.max(0, extra - 1);
-          // Respect existing multi-column items by taking max
-          const currentSpan = (() => {
-            // parse class-intended spans: wide/big => 2
-            if (it.classList.contains("big") || it.classList.contains("wide")) return 2;
-            return 1;
-          })();
-          span = Math.max(span, currentSpan);
-          it.style.gridColumnEnd = `span ${span}`;
-        });
-      }
-
-      // Randomly assign .wide / .tall / .big with weighted probabilities
-      function randomClassItem(div) {
-        if (!div) return;
-        // Clear first
-        div.classList.remove("wide", "tall", "big");
-        // New weights: big 18%, tall 42%, wide 10%, none 30%
-        const r = Math.random();
-        if (r < 0.18) {
-          div.classList.add("big");
-        } else if (r < 0.60) {
-          div.classList.add("tall");
-        } else if (r < 0.70) {
-          div.classList.add("wide");
-        } // else none
-      }
-
-      async function loadGallery() {
-        const res = await fetch("http://localhost:5000/api/bulk-images");
-        const data = await res.json();
-
-        const gallery = document.querySelector(".grid-wrapper");
-        if (!gallery) return;
-
-        const items = [];
-
-        data.forEach((item) => {
-          item.images.forEach((img) => {
-            if (!img.isActive) return;
-
-            const imageUrl = `http://localhost:5000${img.url}`;
-
-            const div = document.createElement("div");
-            div.className = "grid-item";
-
-            const imageEl = document.createElement("img");
-            imageEl.alt = "gallery";
-            imageEl.src = imageUrl;
-            imageEl.loading = "lazy";
-
-            // Once image loads, compute row span then reveal item
-            imageEl.addEventListener("load", () => {
-              // double RAF to ensure layout is up-to-date before measuring
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  randomClassItem(div);
-                  setRowSpan(div, gallery);
-                  div.style.visibility = "visible";
-                  div.classList.add("animate");
-                  balanceLastRow(gallery);
-                });
-              });
-            });
-
-            // In case of load error, compute a reasonable default span and reveal
-            imageEl.addEventListener("error", () => {
-              requestAnimationFrame(() => {
-                randomClassItem(div);
-                setRowSpan(div, gallery); // will fallback to ratio-based calc
-                div.style.visibility = "visible";
-                div.classList.add("animate");
-                balanceLastRow(gallery);
-              });
-            });
-
-            // Handle cached images where 'load' might not fire
-            if (imageEl.complete) {
-              requestAnimationFrame(() => {
-                randomClassItem(div);
-                setRowSpan(div, gallery);
-                div.style.visibility = "visible";
-                div.classList.add("animate");
-                balanceLastRow(gallery);
-              });
-            }
-
-            div.appendChild(imageEl);
-            gallery.appendChild(div);
-            items.push(div);
-          });
-        });
-
-        // Recompute spans on window resize
-        const recalcAll = debounce(() => {
-          items.forEach((it) => setRowSpan(it, gallery));
-          balanceLastRow(gallery);
-        }, 150);
-        window.addEventListener("resize", recalcAll);
-        window.addEventListener("orientationchange", recalcAll);
-
-        // No forced reveal timeout to avoid premature skinny rows
-      }
-
-      loadGallery();
     </script>
   </body>
 
