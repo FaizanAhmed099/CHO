@@ -2362,13 +2362,33 @@
           const ceoContainer = document.getElementById("ceoBlock");
           const directorsContainer = document.getElementById("directorsRow");
 
-          // Find CEO/Chairman (first one with role Chairman or CEO)
-          const ceo = directors.find(
-            (d) =>
-              d.role.toLowerCase().includes("chairman") ||
-              d.role.toLowerCase().includes("ceo")
-          );
-          const others = directors.filter((d) => d._id !== ceo?._id);
+          // Helper: role seniority rank (lower is higher priority)
+          const getRank = (role = "") => {
+            const r = String(role).toLowerCase();
+            if (r.includes("chairman")) return 0; // Chairman first
+            if (r.includes("chief executive") || r.includes("ceo")) return 1; // then CEO
+            if (r.includes("vice") && r.includes("chairman")) return 2; // then Vice Chairman
+            if (r.includes("director")) return 3;
+            if (r.includes("manager")) return 4;
+            return 99;
+          };
+
+          // Sort by rank keeping stable order among equals
+          const sorted = [...directors]
+            .map((d, i) => ({ d, i }))
+            .sort((a, b) => {
+              const ra = getRank(a.d.role);
+              const rb = getRank(b.d.role);
+              if (ra !== rb) return ra - rb;
+              return a.i - b.i; // stable
+            })
+            .map((x) => x.d);
+
+          // Take first top-ranked as CEO/Chairman block if matches rank 0
+          const ceoCandidate = sorted[0];
+          const isTop = ceoCandidate && getRank(ceoCandidate.role) === 0;
+          const ceo = isTop ? ceoCandidate : null;
+          const others = isTop ? sorted.slice(1) : sorted;
 
           if (ceo) {
             const ceoImage = `http://localhost:5000${ceo.image}`;
@@ -2415,7 +2435,7 @@
             ceoContainer.innerHTML = ceoHTML;
           }
 
-          // Render other directors
+          // Render other directors in the sorted order
           others.forEach((dir) => {
             const img = `http://localhost:5000${dir.image}`;
             const modalId = `modal_${dir._id}`;
@@ -2430,7 +2450,7 @@
                       <h4>${dir.name}</h4>
                       <span class="ceo-name-text">${dir.nameAr}</span><br>
                       <span class="ceo-name-text">${dir.role}</span><br>
-                
+              
                     </div>
                   </a>
                 </div>

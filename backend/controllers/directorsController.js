@@ -39,6 +39,26 @@ exports.create = async (req, res) => {
     const exists = await Director.findOne({ slug: finalSlug });
     if (exists) return res.status(400).json({ message: 'Validation failed', errors: ['Slug already exists'] });
 
+    // Uniqueness: Only one CEO and one Chairman (Chairman does not include Vice Chairman)
+    const roleLc = String(role).toLowerCase();
+    const isCeo = roleLc.includes('chief executive') || roleLc.includes('ceo');
+    const isChairman = roleLc.includes('chairman') && !roleLc.includes('vice');
+    if (isCeo) {
+      const existingCeo = await Director.findOne({ role: { $regex: /(chief\s+executive|\bceo\b)/i } });
+      if (existingCeo) {
+        return res.status(400).json({ message: 'Validation failed', errors: ['A CEO already exists'] });
+      }
+    }
+    if (isChairman) {
+      const existingChairman = await Director.findOne({ $and: [
+        { role: { $regex: /chairman/i } },
+        { role: { $not: /vice/i } }
+      ]});
+      if (existingChairman) {
+        return res.status(400).json({ message: 'Validation failed', errors: ['A Chairman already exists'] });
+      }
+    }
+
     // Auto-translate Arabic fields if not provided
     const autoNameAr = nameAr && String(nameAr).trim() ? String(nameAr) : await toArabic(name);
     const autoRoleAr = roleAr && String(roleAr).trim() ? String(roleAr) : await toArabic(role);
@@ -161,6 +181,24 @@ exports.update = async (req, res) => {
     if (updates.slug && updates.slug !== existing.slug) {
       const taken = await Director.findOne({ slug: updates.slug, _id: { $ne: id } });
       if (taken) return res.status(400).json({ message: 'Validation failed', errors: ['Slug already exists'] });
+    }
+
+    // Uniqueness on roles: only one CEO and one Chairman (Chairman not including Vice Chairman)
+    if ('role' in updates) {
+      const r = String(updates.role || '').toLowerCase();
+      const wantCeo = r.includes('chief executive') || r.includes('ceo');
+      const wantChairman = r.includes('chairman') && !r.includes('vice');
+      if (wantCeo) {
+        const otherCeo = await Director.findOne({ _id: { $ne: id }, role: { $regex: /(chief\s+executive|\bceo\b)/i } });
+        if (otherCeo) return res.status(400).json({ message: 'Validation failed', errors: ['A CEO already exists'] });
+      }
+      if (wantChairman) {
+        const otherChairman = await Director.findOne({ _id: { $ne: id }, $and: [
+          { role: { $regex: /chairman/i } },
+          { role: { $not: /vice/i } }
+        ]});
+        if (otherChairman) return res.status(400).json({ message: 'Validation failed', errors: ['A Chairman already exists'] });
+      }
     }
 
     const updated = await Director.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
