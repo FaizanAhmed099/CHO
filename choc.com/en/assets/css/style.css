@@ -9064,10 +9064,11 @@ svg.active .tam-anim-10 {
   -ms-transition: all 0.3s ease-out 0s !important;
   -o-transition: all 0.3s ease-out 0s !important;
   transition: all 0.3s ease-out 0s !important;
+  width: 100%;
+  aspect-ratio: 1 / 1;
 }
 .exe-members-wrapper .exe-members-image:before {
   content: "";
-  background: url("../images/exe-mgnt/theme3.svg") no-repeat;
   height: 272px;
   width: 292px;
   position: absolute;
@@ -9081,9 +9082,10 @@ svg.active .tam-anim-10 {
   -ms-transition: all 0.3s ease-out 0s !important;
   -o-transition: all 0.3s ease-out 0s !important;
   transition: all 0.3s ease-out 0s !important;
+  display: block;
   width: 100%;
-  text-align: center;
-  position: relative;
+  height: 100%;
+  object-fit: cover;
 }
 .exe-members-wrapper .exe-members-info {
   padding: 25px 50px 25px 25px;
@@ -9128,9 +9130,9 @@ svg.active .tam-anim-10 {
   background: transparent;
   transition: all 0s ease;
 }
-.exe-members-wrapper:hover .exe-members-image {
+/* .exe-members-wrapper:hover .exe-members-image {
   background-color: #231f20;
-}
+} */
 .exe-members-wrapper:hover .exe-members-image:before {
   opacity: 1;
 }

@@ -1,7 +1,7 @@
 "use strict";
 
 (function () {
-  const API_BASE = window.__API_BASE__ || "https://cho-tj61.onrender.com";
+  const API_BASE = window.__API_BASE__ || "http://localhost:5000";
   const TOKEN_KEY = "choc_admin_token";
 
   // -------------- Utilities --------------

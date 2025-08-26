@@ -386,6 +386,10 @@ window.DirectorsModule = (function () {
         targetEl.dataset.autofill = "0";
       };
       targetEl.addEventListener("input", markManual);
+      // Ensure we allow upgrading auto-filled values in edit mode until the user types in Arabic
+      if (!targetEl.dataset.manual) {
+        targetEl.dataset.autofill = targetEl.dataset.autofill || "1";
+      }
       // Debounced transliteration while typing
       const updateAuto = _debounce(() => {
         if (targetEl.dataset.manual === "1") return;
@@ -398,10 +402,13 @@ window.DirectorsModule = (function () {
         }
       }, 300);
       sourceEl.addEventListener("input", updateAuto);
-      // On blur, try to upgrade via backend translation
-      sourceEl.addEventListener("blur", () =>
-        translateField(sourceEl, targetEl)
-      );
+      // Debounced backend translate while typing (rate-limited inside translateField)
+      const upgradeAuto = _debounce(() => {
+        translateField(sourceEl, targetEl);
+      }, 700);
+      sourceEl.addEventListener("input", upgradeAuto);
+      // On blur, also try to upgrade via backend translation to catch last change
+      sourceEl.addEventListener("blur", () => translateField(sourceEl, targetEl));
     }
     // Enable live transliteration + upgrade on blur via backend
     bindAutoArabic(nameInput, nameArInput);
