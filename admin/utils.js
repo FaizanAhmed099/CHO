@@ -123,7 +123,7 @@ window.AdminUtils = (function () {
     return `<div class="d-flex flex-column justify-content-center align-items-center text-muted" style="min-height:40vh;"><div class="spinner-border text-primary mb-2" role="status"></div><span>${message}</span></div>`;
   }
 
-  function toast(msg, type = "info") {
+  function toast(msg, type = "info", duration = 3500) {
     const el = document.createElement("div");
     el.className = `toast-msg toast-${type}`;
     el.textContent = Array.isArray(msg)
@@ -136,7 +136,7 @@ window.AdminUtils = (function () {
     setTimeout(() => {
       el.classList.remove("show");
       setTimeout(() => el.remove(), 300);
-    }, 3500);
+    }, Math.max(3000, duration));
   }
 
   function imgUrl(p) {
@@ -173,6 +173,8 @@ window.AdminUtils = (function () {
       input.insertAdjacentElement("afterend", feedback);
     }
     feedback.textContent = message;
+    // Ensure it's visible even if theme overrides Bootstrap behavior
+    feedback.style.display = "block";
   }
 
   function clearFieldError(input) {

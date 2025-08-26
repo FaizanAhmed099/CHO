@@ -276,7 +276,7 @@ window.DirectorsModule = (function () {
         } catch (err) {
           // revert UI on error
           e.target.checked = !checked;
-          toast(err.message || "Failed to update status", "error");
+          toast(err.message || "Failed to update status", "error", 4000);
         }
       }
     });
@@ -528,10 +528,23 @@ window.DirectorsModule = (function () {
         }
         if (!data._id && !currentFile) {
           dz.classList.add("is-invalid");
-          toast("Image is required.", "error");
+          toast("Image is required.", "error", 4000);
           isValid = false;
         }
-        if (!isValid) return;
+        if (!isValid) {
+          // Focus/scroll to the first invalid field or image dropzone
+          const firstInvalid = form.querySelector(".is-invalid, .drop-zone.is-invalid");
+          if (firstInvalid) {
+            if (firstInvalid.classList.contains("drop-zone")) {
+              firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+            } else {
+              firstInvalid.focus();
+              firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          }
+          toast("Please fix the highlighted fields.", "error", 4000);
+          return;
+        }
 
         const fd = new FormData(form);
         fd.set("isActive", $("#isActive").checked);
@@ -553,7 +566,28 @@ window.DirectorsModule = (function () {
           toast(`Director ${data._id ? "updated" : "created"}!`, "success");
           render();
         } catch (err) {
-          toast(err.message, "error");
+          // Prefer server-side validation arrays when available
+          let shownArrayToast = false;
+          if (Array.isArray(err?.errors) && err.errors.length) {
+            // Map common messages to specific fields for better UX
+            err.errors.forEach((m) => {
+              const msg = String(m);
+              const l = msg.toLowerCase();
+              if (l.includes("slug")) setFieldError(slugInput, msg);
+              if (l.includes("name")) setFieldError(nameInput, msg);
+              if (l.includes("role") || l.includes("ceo") || l.includes("chairman")) setFieldError(roleInput, msg);
+              if (l.includes("image")) dz.classList.add("is-invalid");
+            });
+            // Focus first invalid
+            const firstInvalid = form.querySelector(".is-invalid, .drop-zone.is-invalid");
+            if (firstInvalid) firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+            // Show combined toast list
+            toast(err.errors, "error", 6000);
+            shownArrayToast = true;
+          }
+          if (!shownArrayToast) {
+            toast(err?.message || "Failed to save.", "error", 4000);
+          }
         }
       })
     );
