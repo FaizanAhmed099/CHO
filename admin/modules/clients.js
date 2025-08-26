@@ -162,9 +162,9 @@ window.ClientsModule = (function () {
       "#content-area"
     ).innerHTML = `<div class="content-header"><h2 class="mb-0">${
       isEditing ? "Edit Client" : "Add New Client"
-    }</h2></div><div class="card shadow-sm"><div class="card-body"><form id="clientForm" novalidate><div class="row"><div class="col-md-7"><div class="mb-3"><label for="name" class="form-label">Client Name <span class="text-danger">*</span></label><input type="text" class="form-control" id="name" name="name" value="${
+    }</h2></div><div class="card shadow-sm"><div class="card-body"><form id="clientForm" novalidate><div class="row"><div class="col-md-7"><div class="mb-3"><label for="name" class="form-label">Client Name</label><input type="text" class="form-control" id="name" name="name" value="${
       data.name || ""
-    }" required></div><div class="mb-3"><label for="description" class="form-label">Description <span class="text-danger">*</span></label><textarea class="form-control" id="description" name="description" rows="8" required>${
+    }"></div><div class="mb-3"><label for="description" class="form-label">Description</label><textarea class="form-control" id="description" name="description" rows="8">${
       data.description || ""
     }</textarea></div></div><div class="col-md-5"><label class="form-label">Logo <span class="text-danger">*</span></label><div id="logoDropZone" class="drop-zone mb-3"><div class="drop-content"><i class="fas fa-cloud-upload-alt fa-3x text-muted mb-2"></i><p class="mb-0">Drop image here or click</p><small class="text-muted">PNG, JPG, GIF</small></div></div><div id="logoPreviewContainer" class="text-center" style="display: none;"><img id="logoPreview" src="" alt="Logo Preview" class="img-thumbnail mb-2" style="max-height: 150px;"><button type="button" id="removeLogoBtn" class="btn btn-sm btn-outline-danger">Remove Image</button></div><input type="file" id="logo" name="logo" class="d-none" accept="image/*"><div class="form-check form-switch mt-4"><input class="form-check-input" type="checkbox" role="switch" id="isActive" name="isActive" ${
       data.isActive !== false ? "checked" : ""
@@ -256,14 +256,7 @@ window.ClientsModule = (function () {
         clearFieldError(descInput);
         dz.classList.remove("is-invalid");
         let isValid = true;
-        if (!nameInput.value.trim()) {
-          setFieldError(nameInput, "Client name is required.");
-          isValid = false;
-        }
-        if (!descInput.value.trim()) {
-          setFieldError(descInput, "A description is required.");
-          isValid = false;
-        }
+        // name and description are optional now
         if (!data._id && !currentFile) {
           dz.classList.add("is-invalid");
           toast("A logo image is required.", "error");

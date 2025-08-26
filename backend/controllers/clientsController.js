@@ -19,12 +19,8 @@ exports.create = async (req, res) => {
     const logo = uploadedPath || req.body.logo;
 
     const errors = [];
-    if (!name) errors.push('Client name is required');
-    if (!logo) errors.push('Case: Missing logo (invalid ❌) - upload a file or provide a URL');
-    if (!description) errors.push('Description is required');
-    if (typeof description === 'string' && description.trim().length > 0 && description.trim().length < 3) {
-      errors.push('Case: Short description (invalid ❌ because < 3 chars)');
-    }
+    // name and description are optional now
+    if (!logo) errors.push('Logo is required (upload a file or provide a URL)');
     if (errors.length) return res.status(400).json({ message: 'Validation failed', errors });
 
     const client = await Clients.create({
@@ -84,12 +80,7 @@ exports.update = async (req, res) => {
     }
     // Validate provided fields (partial update)
     const errors = [];
-    if ('name' in updates && !updates.name) errors.push('Client name cannot be empty');
-    if ('description' in updates) {
-      const d = String(updates.description || '').trim();
-      if (d.length === 0) errors.push('Description cannot be empty');
-      else if (d.length < 3) errors.push('Case: Short description (invalid ❌ because < 3 chars)');
-    }
+    // name and description can be empty now; no errors
     // If logo is provided as an empty/falsy value and no new file is uploaded, keep existing logo
     if ('logo' in updates && !req.file) {
       if (!updates.logo) {
