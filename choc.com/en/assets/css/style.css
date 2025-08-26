@@ -9069,6 +9069,7 @@ svg.active .tam-anim-10 {
 }
 .exe-members-wrapper .exe-members-image:before {
   content: "";
+  background: url("../images/exe-mgnt/theme3.svg") no-repeat;
   height: 272px;
   width: 292px;
   position: absolute;
@@ -9130,9 +9131,9 @@ svg.active .tam-anim-10 {
   background: transparent;
   transition: all 0s ease;
 }
-/* .exe-members-wrapper:hover .exe-members-image {
+.exe-members-wrapper:hover .exe-members-image {
   background-color: #231f20;
-} */
+}
 .exe-members-wrapper:hover .exe-members-image:before {
   opacity: 1;
 }
@@ -9251,6 +9252,7 @@ svg.active .tam-anim-10 {
 }
 .modal-dialog .modal-content .modal-body .exe-members-wrapper .exe-members-image:before {
   opacity: 1;
+
 }
 
 .mry-menu nav ul .menu-item .sub-menu .menu-item a {

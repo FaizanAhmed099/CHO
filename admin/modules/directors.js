@@ -504,6 +504,28 @@ window.DirectorsModule = (function () {
           setFieldError(roleInput, "Role is required.");
           isValid = false;
         }
+        // Uniqueness check: only one CEO and one Chairman (Chairman excludes Vice Chairman)
+        if (roleInput.value.trim()) {
+          const r = roleInput.value.trim().toLowerCase();
+          const isCeo = r.includes("chief executive") || r.includes("ceo");
+          const isChairman = r.includes("chairman") && !r.includes("vice");
+          if (isCeo || isChairman) {
+            const exists = _directors.some((d) => {
+              if (data._id && d._id === data._id) return false; // exclude self when editing
+              const dr = String(d.role || "").toLowerCase();
+              if (isCeo) return dr.includes("chief executive") || dr.includes("ceo");
+              if (isChairman) return dr.includes("chairman") && !dr.includes("vice");
+              return false;
+            });
+            if (exists) {
+              setFieldError(
+                roleInput,
+                isCeo ? "A CEO already exists." : "A Chairman already exists."
+              );
+              isValid = false;
+            }
+          }
+        }
         if (!data._id && !currentFile) {
           dz.classList.add("is-invalid");
           toast("Image is required.", "error");
