@@ -1410,7 +1410,7 @@
     <script>
         async function loadDirectors() {
           try {
-            const response = await fetch("http://localhost:5000/api/directors");
+            const response = await fetch("https://cho-tj61.onrender.com/api/directors");
             const directors = await response.json();
       
             const ceoContainer = document.getElementById("ceoBlock");
@@ -1421,7 +1421,7 @@
             const others = directors.filter(d => d._id !== ceo?._id);
       
             if (ceo) {
-              const ceoImage = `http://localhost:5000${ceo.image}`;
+              const ceoImage = `https://cho-tj61.onrender.com${ceo.image}`;
               const ceoModalId = `modal_${ceo._id}`;
       
               const ceoHTML = `
@@ -1467,7 +1467,7 @@
       
             // Render other directors
             others.forEach(dir => {
-              const img = `http://localhost:5000${dir.image}`;
+              const img = `https://cho-tj61.onrender.com${dir.image}`;
               const modalId = `modal_${dir._id}`;
       
               const directorHTML = `

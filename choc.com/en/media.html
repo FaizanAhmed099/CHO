@@ -303,7 +303,7 @@
     <div class="text-center mt-5">
         <h1 class="Gallary">Gallary</h1>
     </div>
-    <div class="grid-wrapper mt-5 mb-5">
+    <div class="grid-wrapper mt-5 mb-5" id="galleryGrid">
         <div class="grid-item">
           <img src="../uploads/manger/choc/cleaning-1.jpg" alt="Image 1">
         </div>
@@ -1033,6 +1033,34 @@ Our Sacred Space Stewardship Program has revolutionized maintenance in places of
             });
         });
         //VIEWPORT SCRIPT ENDS
+    </script>
+    <!-- Dynamic Gallery (pulls from backend like projects page) -->
+    <script>
+      async function loadGallery() {
+        try {
+          const response = await fetch("https://cho-tj61.onrender.com/api/gallery");
+          const items = await response.json();
+
+          const grid = document.getElementById("galleryGrid");
+          if (!grid) return;
+          grid.innerHTML = ""; // clear static placeholders
+
+          const base = "https://cho-tj61.onrender.com";
+          items.forEach(it => {
+            const src = (it.image && it.image.startsWith("http")) ? it.image : `${base}${it.image}`;
+            const alt = it.alt || it.title || "Gallery image";
+            const html = `
+              <div class="grid-item">
+                <img src="${src}" alt="${alt}">
+              </div>
+            `;
+            grid.insertAdjacentHTML("beforeend", html);
+          });
+        } catch (err) {
+          console.error("Error fetching gallery:", err);
+        }
+      }
+      document.addEventListener("DOMContentLoaded", loadGallery);
     </script>
 </body>
 
