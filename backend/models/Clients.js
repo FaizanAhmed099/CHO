@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const ClientSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
+    name: { type: String, required: false, trim: true },
     // Public URL or relative path to the stored logo image
     logo: { type: String, required: true, trim: true },
-    description: { type: String, required: true, trim: true },
+    description: { type: String, required: false, trim: true },
     isActive: { type: Boolean, default: true }
   },
   { timestamps: true }

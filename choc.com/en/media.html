@@ -585,7 +585,7 @@
       </div>
     </div> -->
 
-    <div class="grid-wrapper mt-5 mb-5"></div>
+    <div class="grid-wrapper mt-5 mb-5"></div> 
 
     <!-- <div class="main-content-wrapper">
         
@@ -2231,8 +2231,7 @@ Our Sacred Space Stewardship Program has revolutionized maintenance in places of
       function setRowSpan(item, container) {
         if (!item) return;
         const styles = window.getComputedStyle(container);
-        const rowHeight =
-          parseFloat(styles.getPropertyValue("grid-auto-rows")) || 8;
+        const rowHeight = parseFloat(styles.getPropertyValue("grid-auto-rows")) || 8;
         const gap = parseFloat(
           styles.getPropertyValue("row-gap") ||
             styles.getPropertyValue("grid-row-gap") ||
@@ -2242,24 +2241,26 @@ Our Sacred Space Stewardship Program has revolutionized maintenance in places of
         const img = item.querySelector("img");
         if (!img) return;
 
-        // Calculate expected rendered height using natural aspect ratio and current column width
-        const colWidth =
-          item.getBoundingClientRect().width ||
-          container.getBoundingClientRect().width;
-        const ratio =
-          img.naturalHeight && img.naturalWidth
-            ? img.naturalHeight / img.naturalWidth
-            : 1;
-        let expectedHeight = colWidth * ratio;
+        // Prefer actual rendered image height; if 0, fallback to natural ratio * column width
+        let imgHeight = img.getBoundingClientRect().height;
+        if (!imgHeight) {
+          const colWidth = item.getBoundingClientRect().width || container.getBoundingClientRect().width;
+          const ratio = (img.naturalHeight && img.naturalWidth) ? img.naturalHeight / img.naturalWidth : 0.75;
+          imgHeight = colWidth * ratio;
+          if (!imgHeight) {
+            // If still not measurable, try again on next frame
+            requestAnimationFrame(() => setRowSpan(item, container));
+            return;
+          }
+        }
 
-        // Respect span classes for rows
-        if (item.classList.contains("tall")) expectedHeight *= 2;
-        if (item.classList.contains("big")) expectedHeight *= 2; // big should be roughly 2x height too
+        let effectiveHeight = imgHeight;
+        // Allow row span modifiers to influence height as intended
+        // Make tall and big a bit larger vertically
+        if (item.classList.contains("tall")) effectiveHeight *= 2.5;
+        if (item.classList.contains("big")) effectiveHeight *= 2.2;
 
-        const span = Math.max(
-          1,
-          Math.ceil((expectedHeight + gap) / (rowHeight + gap))
-        );
+        const span = Math.max(1, Math.ceil((effectiveHeight + gap) / (rowHeight + gap)));
         item.style.gridRowEnd = `span ${span}`;
       }
 
@@ -2270,6 +2271,70 @@ Our Sacred Space Stewardship Program has revolutionized maintenance in places of
           clearTimeout(t);
           t = setTimeout(() => fn.apply(this, args), wait);
         };
+      }
+
+      // Make the last visual row items stretch to form a full line
+      function balanceLastRow(container) {
+        if (!container) return;
+        const styles = window.getComputedStyle(container);
+        const cols = (styles.getPropertyValue("grid-template-columns") || "")
+          .split(" ")
+          .filter(Boolean).length;
+        if (!cols || cols <= 1) return; // nothing to balance
+
+        const items = Array.from(container.querySelectorAll(".grid-item"));
+        if (!items.length) return;
+
+        // Clear any previous overrides
+        items.forEach((it) => (it.style.gridColumnEnd = ""));
+
+        // Find last row by visual position
+        const tops = items
+          .filter((it) => it.style.visibility !== "hidden")
+          .map((it) => it.getBoundingClientRect().top);
+        if (!tops.length) return;
+        const maxTop = Math.max(...tops);
+        const lastRow = items.filter(
+          (it) => it.style.visibility !== "hidden" && Math.abs(it.getBoundingClientRect().top - maxTop) < 2
+        );
+
+        if (lastRow.length === 0) return;
+
+        // If last row count already equals columns, do nothing
+        if (lastRow.length >= cols) return;
+
+        // Distribute remaining columns evenly across last row items (prefer non-wide/big)
+        const remaining = cols; // we'll set explicit spans that together fill the row
+        const base = Math.floor(remaining / lastRow.length);
+        let extra = remaining % lastRow.length;
+        lastRow.forEach((it) => {
+          let span = base + (extra > 0 ? 1 : 0);
+          extra = Math.max(0, extra - 1);
+          // Respect existing multi-column items by taking max
+          const currentSpan = (() => {
+            // parse class-intended spans: wide/big => 2
+            if (it.classList.contains("big") || it.classList.contains("wide")) return 2;
+            return 1;
+          })();
+          span = Math.max(span, currentSpan);
+          it.style.gridColumnEnd = `span ${span}`;
+        });
+      }
+
+      // Randomly assign .wide / .tall / .big with weighted probabilities
+      function randomClassItem(div) {
+        if (!div) return;
+        // Clear first
+        div.classList.remove("wide", "tall", "big");
+        // New weights: big 18%, tall 42%, wide 10%, none 30%
+        const r = Math.random();
+        if (r < 0.18) {
+          div.classList.add("big");
+        } else if (r < 0.60) {
+          div.classList.add("tall");
+        } else if (r < 0.70) {
+          div.classList.add("wide");
+        } // else none
       }
 
       async function loadGallery() {
@@ -2297,14 +2362,38 @@ Our Sacred Space Stewardship Program has revolutionized maintenance in places of
 
             // Once image loads, compute row span then reveal item
             imageEl.addEventListener("load", () => {
-              setRowSpan(div, gallery);
-              div.style.visibility = "visible";
+              // double RAF to ensure layout is up-to-date before measuring
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  randomClassItem(div);
+                  setRowSpan(div, gallery);
+                  div.style.visibility = "visible";
+                  div.classList.add("animate");
+                  balanceLastRow(gallery);
+                });
+              });
+            });
+
+            // In case of load error, compute a reasonable default span and reveal
+            imageEl.addEventListener("error", () => {
+              requestAnimationFrame(() => {
+                randomClassItem(div);
+                setRowSpan(div, gallery); // will fallback to ratio-based calc
+                div.style.visibility = "visible";
+                div.classList.add("animate");
+                balanceLastRow(gallery);
+              });
             });
 
             // Handle cached images where 'load' might not fire
             if (imageEl.complete) {
-              setRowSpan(div, gallery);
-              div.style.visibility = "visible";
+              requestAnimationFrame(() => {
+                randomClassItem(div);
+                setRowSpan(div, gallery);
+                div.style.visibility = "visible";
+                div.classList.add("animate");
+                balanceLastRow(gallery);
+              });
             }
 
             div.appendChild(imageEl);
@@ -2316,8 +2405,12 @@ Our Sacred Space Stewardship Program has revolutionized maintenance in places of
         // Recompute spans on window resize
         const recalcAll = debounce(() => {
           items.forEach((it) => setRowSpan(it, gallery));
-        }, 200);
+          balanceLastRow(gallery);
+        }, 150);
         window.addEventListener("resize", recalcAll);
+        window.addEventListener("orientationchange", recalcAll);
+
+        // No forced reveal timeout to avoid premature skinny rows
       }
 
       loadGallery();

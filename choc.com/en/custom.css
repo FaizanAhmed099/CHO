@@ -1470,7 +1470,7 @@
 /* Use true CSS Grid so span classes work reliably; add !important to override Bootstrap */
 body .grid-wrapper {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+  grid-template-columns: repeat(4, 1fr) !important; /* desktop: 4 columns */
   grid-auto-rows: 8px !important; /* fine row unit for precise spans */
   grid-auto-flow: dense !important; /* pack items tightly to reduce gaps */
   gap: 12px !important;
@@ -1481,7 +1481,7 @@ body .grid-wrapper .grid-item {
   position: relative !important;
   width: 100% !important;
   height: auto !important;
-  visibility: hidden; /* revealed after span calc to avoid slicing */
+  overflow: hidden; /* keep hover borders inside */
 }
 
 /* Make images fill their grid cells cleanly */
@@ -1489,6 +1489,8 @@ body .grid-wrapper .grid-item img {
   display: block !important;
   width: 100% !important;
   height: auto !important; /* keep intrinsic aspect ratio */
+  position: relative;
+  z-index: 1;
   object-fit: cover !important;
   border-radius: 0px !important;
 }
@@ -1508,7 +1510,7 @@ body .grid-wrapper .grid-item.big {
 /* Tablet view */
 @media (max-width: 1024px) {
   body .grid-wrapper {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    grid-template-columns: repeat(3, 1fr) !important; /* tablet: 3 columns */
     grid-auto-rows: 8px !important;
   }
 }
@@ -1516,7 +1518,7 @@ body .grid-wrapper .grid-item.big {
 /* Mobile view */
 @media (max-width: 768px) {
   body .grid-wrapper {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* mobile: 2 columns */
     grid-auto-rows: 9px !important;
   }
   /* Collapse spans on smaller screens for a tighter layout */
@@ -1546,7 +1548,8 @@ body .grid-wrapper .grid-item::after {
   width: 0%;
   height: 0%;
   opacity: 0;
-  pointer-events: none;
+  z-index: 2;
+  pointer-events: none; /* do not block image interactions */
   transition: width 0.2s linear, height 0.15s 0.2s ease-out, opacity 0s 0.35s;
 }
 
