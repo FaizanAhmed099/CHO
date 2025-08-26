@@ -72,7 +72,7 @@ function updateTestimonial() {
   const name = document.getElementById("name");
 
   if (!profile || !review || !name) {
-    console.warn("Some testimonial elements are missing in the DOM.");
+    // console.warn("Some testimonial elements are missing in the DOM.");
     return;
   }
 
