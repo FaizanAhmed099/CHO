@@ -1168,11 +1168,14 @@
 
 
 
+<!-- Load environment variables -->
+<script src="../../env.js"></script>
 <!-- Certificate Script -->
 <script>
     async function loadCertificates() {
       try {
-        const response = await fetch("http://localhost:5000/api/awards-certificates");
+        const API_BASE = window.__API_BASE__;
+        const response = await fetch(`${API_BASE}/api/awards-certificates`);
         const certificates = await response.json();
   
         const container = document.getElementById("certificatesRow");
@@ -1180,7 +1183,7 @@
   
         certificates.forEach(cert => {
           // prepend backend URL to image path
-          const imageUrl = `http://localhost:5000${cert.image}`;
+          const imageUrl = `${API_BASE}${cert.image}`;
   
           const certHTML = `
             <div class="col-lg-4 col-md-6 col-12 mb-4" data-aos="fade-right" data-aos-easing="linear">

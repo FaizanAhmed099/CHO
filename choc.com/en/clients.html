@@ -51,6 +51,27 @@
 
   <link href="assets/css/aos.css" rel="stylesheet" />
 
+  <style>
+    /* Ensure all client tiles have the same height */
+    .our-clients-section .our-clients-column {
+      height: 160px; /* adjust as needed */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      border: 1px solid #eee;
+    }
+    .our-clients-section .our-clients-column img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -1336,11 +1357,13 @@
     });
     //VIEWPORT SCRIPT ENDS
   </script>
+  <!-- Load environment variables -->
+  <script src="../../env.js"></script>
   <script>
     // Dynamically load clients from backend without changing layout
     (async function () {
       try {
-        var API_BASE = "http://localhost:5000";
+        var API_BASE = window.__API_BASE__;
         var endpoint = API_BASE + "/api/clients";
 
         var res = await fetch(endpoint, {
@@ -1380,8 +1403,8 @@
             var col = document.createElement("div");
             col.className = "col-sm-4 col-md-3 col-lg-3 wow fadeInUp";
             col.innerHTML =
-              '<a href="#" target="_blank">' +
-              '<div class="our-clients-column p-4">' +
+              '<a >' +
+              '<div class="our-clients-column p-4 ">' +
               '<img src="' +
               logoSrc(c.logo) +
               '" alt="' +

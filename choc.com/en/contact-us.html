@@ -2381,6 +2381,8 @@
       //VIEWPORT SCRIPT ENDS
     </script>
 
+    <!-- Load environment variables -->
+    <script src="../../env.js"></script>
     <script>
       document
         .getElementById("contactForm")
@@ -2407,12 +2409,8 @@
           document.getElementById("div_wait").style.display = "block";
 
           try {
-            const API_BASE =
-              (window.location.hostname === "127.0.0.1" ||
-                window.location.hostname === "localhost") &&
-              window.location.port === "5500"
-                ? "http://localhost:5000"
-                : "";
+            // Load API base from env.js
+            const API_BASE = window.__API_BASE__;
             const response = await fetch(`${API_BASE}/api/contact`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },

@@ -2352,11 +2352,14 @@
       //VIEWPORT SCRIPT ENDS
     </script>
 
+    <!-- Load environment variables -->
+    <script src="../../env.js"></script>
     <!-- Board-of directors -->
     <script>
       async function loadDirectors() {
         try {
-          const response = await fetch("http://localhost:5000/api/directors");
+          const API_BASE = window.__API_BASE__;
+          const response = await fetch(`${API_BASE}/api/directors`);
           const directors = await response.json();
 
           const ceoContainer = document.getElementById("ceoBlock");
@@ -2391,7 +2394,7 @@
           const others = isTop ? sorted.slice(1) : sorted;
 
           if (ceo) {
-            const ceoImage = `http://localhost:5000${ceo.image}`;
+            const ceoImage = `${API_BASE}${ceo.image}`;
             const ceoModalId = `modal_${ceo._id}`;
 
             const ceoHTML = `
@@ -2437,7 +2440,7 @@
 
           // Render other directors in the sorted order
           others.forEach((dir) => {
-            const img = `http://localhost:5000${dir.image}`;
+            const img = `${API_BASE}${dir.image}`;
             const modalId = `modal_${dir._id}`;
 
             const directorHTML = `

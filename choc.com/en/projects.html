@@ -998,17 +998,19 @@
 
 
     <!-- Project-Section -->
+    <!-- Load environment variables -->
+    <script src="../../env.js"></script>
     <script>
         async function loadProjects() {
           try {
-            const response = await fetch("http://localhost:5000/api/projects");
+            const response = await fetch(`${window.__API_BASE__}/api/projects`);
             const projects = await response.json();
       
             const container = document.getElementById("projectsRow");
             container.innerHTML = ""; // clear old
       
             projects.forEach(proj => {
-              const imageUrl = `http://localhost:5000${proj.image}`; // prepend base URL
+              const imageUrl = `${window.__API_BASE__}${proj.image}`; // prepend base URL
       
               const projectHTML = `
                 <div class="col-lg-4 col-md-6 col-12 mb-4 wow fadeInUp">
