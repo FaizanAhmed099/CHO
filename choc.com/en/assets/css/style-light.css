@@ -170,7 +170,7 @@ a, a:hover {
 	letter-spacing: 0;
 	-webkit-text-stroke-width: 1px;
 	-moz-text-stroke-width: 1px;
-	-webkit-text-stroke-color: #8b8b8b;
+	-webkit-text-stroke-color: #e8b107;
 	-moz-text-stroke-color: #8b8b8b;
 	color: transparent !important;
 	display: block;
@@ -2464,7 +2464,7 @@ background: linear-gradient(135deg, rgba(9,11,13,0.70) 0%, rgba(9,11,13,0) 100%)
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#090b0d",endColorstr="#090b0d",GradientType=1);
 }
 	.mry-border-text{
-    -webkit-text-stroke-color: #8b8b8b;
+    -webkit-text-stroke-color: #e8b107;
     -moz-text-stroke-color: #8b8b8b;
 	}
 
