@@ -1553,7 +1553,7 @@
 }
 
 .grid-item {
-  opacity: 0;
+  opacity: 1;
   transform: translateY(20px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
@@ -1576,6 +1576,7 @@
     grid-template-columns: repeat(2, 1fr); /* 2 columns */
     grid-auto-rows: 150px;
     gap: 10px;
+    background-size: cover;
   }
 
   .grid-item.wide,
