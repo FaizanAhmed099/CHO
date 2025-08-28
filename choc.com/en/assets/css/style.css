@@ -1,5 +1,6 @@
 /* half circle mixin */
 /* Gradient mixin */
+/* eslint-disable */
 *{
   padding: 0;
   margin: 0;
@@ -475,10 +476,6 @@ img {
 
 .z9999 {
   z-index: 9999;
-}
-
-.theme {
-  /*color: $theme-color;*/
 }
 
 .strong {
