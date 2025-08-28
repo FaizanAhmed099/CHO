@@ -1906,6 +1906,7 @@
   margin: 0 0 18px;
   color: var(--muted);
   font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 500;
   }
   /* .litte-title{
     display: inline-flex;
@@ -1922,7 +1923,7 @@
     
     
     /* Hero image */
-    .hero-media{
+    /* .hero-media{
     border-radius: var(--radius);
     overflow: hidden;
     position: relative;
@@ -1931,7 +1932,7 @@
     background: #0b0e13;
     min-height: 240px;
     isolation: isolate;
-    }
+    } */
     .hero-media img{
     width: 100%;
     height: 100%;
@@ -2052,10 +2053,300 @@
       .grid{ grid-template-columns: 1fr; }
       .container{ width: min(100%, 92vw); }
       }
+      
 
+      /* Why Choose Us (Business Strategy) */
+      .why-choose{
+        margin-top: 56px;
+        display: grid;
+        grid-template-columns: .9fr 1.1fr; /* image left, text right */
+        grid-template-areas: 'media text';
+        gap: 32px;
+        align-items: center;
+      }
+      .why-col{ width: 100%; }
+      .why-text{ padding: 6px 0; grid-area: text; }
+      .why-eyebrow{
+        display: inline-block;
+        font-size: 12px;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: #f9b621;
+        margin-bottom: 10px;
+        font-family: "Loew Next Arabic", sans-serif;
+        font-weight: bold;
+      }
+      .why-title{
+        font-family: "Loew Next Arabic"; /* Match your font */
+        font-size: 42px; /* Adjust as needed */
+        text-transform: uppercase;
+        color: transparent; /* Transparent fill */
+        -webkit-text-stroke: 1px #999999; /* Outline color and thickness */
+        margin: 0 0 12px;
+        letter-spacing: -0.02em;
+        margin: 0 0 10px;
+        font-weight: 800;
+        line-height: 1.15;
+        font-size: 40px;
+      }
+      .why-desc{
+        color: #2f2f2f;
+        font-family: "Loew Next Arabic", sans-serif;
+        font-size: clamp(14px, 1.6vw, 17px);
+        margin: 0 0 18px;
+        text-align: justify;
+      }
+      .why-features{
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        gap: 14px 18px;
+      }
+      .why-feature{
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px 0;
+      }
+      .why-feature img{
+        width: 44px; height: 44px; object-fit: contain; flex: 0 0 44px;
+        filter: brightness(0) saturate(100%) invert(62%) sepia(89%) saturate(1202%) hue-rotate(1deg) brightness(103%) contrast(105%);
+      }
+      .why-feature h3{
+        margin: 5px 0px -5px 0px;
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .why-feature p{
+        margin: 0;
+        font-size: 14px;
+        color: #444;
+        font-family: "Loew Next Arabic";
+      }
+      .why-media{
+        position: relative;
+        border-radius: 0px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+        background: #0b0e13;
+        height: 500px; /* shorter image */
+        grid-area: media;
+      }
+      .why-media img{ display:block; width:100%; height:100%; object-fit: cover; }
 
+      @media (max-width: 1024px){
+        .why-choose{ 
+          grid-template-columns: 1fr; 
+          grid-template-areas: 
+            'media'
+            'text';
+        }
+        .why-media{ height: 180px; }
+      }
+      @media (max-width: 720px){
+        .why-features{ grid-template-columns: 1fr; }
+        .why-media{ height: 160px; }
+      }
 
+      /* How We Work (Process) */
+      .process{ 
+        margin-top: 72px; 
+        margin-bottom: 24px;
+      }
+      .process-head{ 
+        text-align: center; 
+        margin-bottom: 28px; 
+      }
+      .process-eyebrow{ 
+        display:inline-block; 
+        font-size:12px; 
+        letter-spacing:.14em; 
+        text-transform:uppercase; 
+        color:#f9b621; 
+        margin-bottom:8px; 
+        font-family:"Loew Next Arabic", sans-serif; 
+        font-weight:bold; 
+      }
+      .process-title{ 
+        font-family: "Loew Next Arabic"; /* Match your font */
+        font-size: 42px; /* Adjust as needed */
+        text-transform: uppercase;
+        color: transparent; /* Transparent fill */
+        -webkit-text-stroke: 1px #999999; /* Outline color and thickness */
+        margin: 0 0 12px;
+        letter-spacing: -0.02em;
+        margin: 0 0 10px;
+        font-weight: 800;
+        line-height: 1.15;
+        /* margin:0; 
+        font-weight:800; 
+        line-height:1.15; 
+        font-size: clamp(22px, 3.2vw, 34px);  */
+      }
+      .process-grid{ 
+        display:grid; 
+        grid-template-columns: repeat(3, minmax(0,1fr)); 
+        gap: 28px; 
+        align-items: stretch; 
+      }
+      .process-item{ 
+        text-align:center; 
+        padding: 18px 14px; 
+        border-radius: 0px; 
+        background: #fff;
+        border: 1px solid #e6b400; 
+        /* box-shadow: 0 10px 24px rgba(0,0,0,.06); */
+      }
+      .process-item:hover{
+        box-shadow: 0 0 11px rgba(33,33,33,.2); 
+      }
+      .process-icon{ 
+        position: relative; 
+        width: 110px; height: 110px; 
+        margin: 0 auto 16px; 
+        border-radius: 50%; 
+        /* background: #f4f8ff;  */
+        display:grid; place-items:center; 
+        border: 4px solid #a47921; 
+      }
+      .process-icon i{ 
+        font-size: 40px; 
+        color: #1f6feb; 
+      }
+      .process-badge{ 
+        position:absolute; 
+        top: -10px; left: 50%; 
+        transform: translateX(-50%); 
+        background: #ffae00; 
+        color:#000; 
+        font-weight:800; 
+        font-size: 14px; 
+        width: 38px; height: 38px; 
+        border-radius: 50%; 
+        display:grid; place-items:center; 
+        box-shadow: 0 6px 14px rgba(249,182,33,.35);
+      }
+      .process-step{ 
+        margin: 6px 0 6px; 
+        font-size: 18px; 
+        font-weight: 800; 
+      }
+      .process-desc{ 
+        margin: 0; 
+        color: #444; 
+        font-size: 14px; 
+        font-family: "Loew Next Arabic", sans-serif; 
+      }
+      
+      .process-icon img{
+        margin: 0px 0px -15px 0px;
+        width: 40px;
+        height: 40px;
+        filter: brightness(0) saturate(100%);
+      }
 
+      @media (max-width: 1024px){
+        .process-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      }
+      @media (max-width: 720px){
+        .process-grid{ grid-template-columns: 1fr; }
+        .process{ margin-top: 56px; }
+      }
+ 
+      /* ==========================
+         DEPEND SECTION (content left, image right)
+         ========================== */
+      .depend{ 
+        display:grid; 
+        grid-template-columns: 1.1fr .9fr; 
+        align-items:center; 
+        gap: 40px; 
+        margin-top: 72px; 
+      }
+      .depend-col{ min-width: 0; }
+      .depend-eyebrow{ 
+        display:inline-block; 
+        color:#f9b621; 
+        text-transform:uppercase; 
+        letter-spacing:.08em; 
+        font-size:14px; 
+        font-weight:700; 
+        margin-bottom:10px; 
+        font-family:"Loew Next Arabic", sans-serif; 
+      }
+      .depend-title{ 
+        font-family: "Loew Next Arabic"; /* Match your font */
+        text-transform: uppercase;
+        color: transparent; /* Transparent fill */
+        -webkit-text-stroke: 1px #999999; /* Outline color and thickness */
+        margin: 0 0 18px;
+        letter-spacing: -0.02em;
+        font-weight:800; 
+        line-height:1.15; 
+        font-size: 35px;
+        /* font-size: clamp(24px, 3.4vw, 38px);  */
+        font-family:"Loew Next Arabic", sans-serif; 
+      }
+      .depend-media{ text-align:right; }
+      .depend-media img{ 
+        width:100%; 
+        max-width:500px; 
+        height:450px; 
+        border-radius:0px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,.08);
+        background:#fff; 
+      }
+
+      /* Accordion (details/summary) */
+      .depend-accordion{ margin-top: 14px; }
+      .depend-item{ 
+        border:1px solid #eee; 
+        border-radius:0px; 
+        background:#fff; 
+        margin:0 0 12px; 
+        overflow:hidden; 
+      }
+      .depend-summary{ 
+        list-style:none; 
+        display:flex; 
+        align-items:center; 
+        justify-content:space-between; 
+        gap:16px; 
+        padding:14px 16px; 
+        cursor:pointer; 
+        font-weight:700; 
+        background:#f6f6f6; 
+        user-select:none; 
+      }
+      .depend-summary::-webkit-details-marker{ display:none; }
+      .depend-item .symbol{ 
+        width:22px; height:22px; 
+        border-radius:4px; 
+        display:inline-grid; place-items:center; 
+        background:#fff; color:#000; 
+        border:1px solid #e5e5e5; 
+        font-weight:800; 
+        flex:0 0 22px; 
+      }
+      .depend-item .symbol::before{ content:"+"; line-height:1; }
+      .depend-item[open] .symbol::before{ content:"–"; }
+      .depend-item[open] .depend-summary{ background:#b49053; color:#000; }
+      .depend-panel{ padding: 0 16px 16px; color:#555; }
+
+      /* Responsive tweaks */
+      @media (max-width: 1200px){
+        .depend{ grid-template-columns: 1fr 1fr; gap:28px; }
+        .depend-media img{ max-width: 480px; }
+      }
+      @media (max-width: 900px){
+        .depend{ grid-template-columns: 1fr; }
+        .depend-text{ order:1; }
+        .depend-media{ order:2; text-align:center; }
+        .depend-media img{ max-width: 520px; }
+      }
+      @media (max-width: 600px){
+        .depend-title{ font-size: clamp(22px, 6vw, 30px); }
+        .depend-media img{ max-width: 100%; }
+      }
 
 
 
