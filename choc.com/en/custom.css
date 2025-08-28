@@ -2283,14 +2283,12 @@
         font-weight:800; 
         line-height:1.15; 
         font-size: 35px;
-        /* font-size: clamp(24px, 3.4vw, 38px);  */
-        font-family:"Loew Next Arabic", sans-serif; 
+        /* font-size: clamp(24px, 3.4vw, 38px);  */ 
       }
       .depend-media{ text-align:right; }
       .depend-media img{ 
         width:100%; 
-        max-width:500px; 
-        height:450px; 
+        height:auto; 
         border-radius:0px; 
         box-shadow: 0 20px 40px rgba(0,0,0,.08);
         background:#fff; 
@@ -2332,6 +2330,9 @@
       .depend-item[open] .depend-summary{ background:#b49053; color:#000; }
       .depend-panel{ padding: 0 16px 16px; color:#555; }
 
+      .depend-panel p{
+        margin: 15px 0px;
+      }
       /* Responsive tweaks */
       @media (max-width: 1200px){
         .depend{ grid-template-columns: 1fr 1fr; gap:28px; }

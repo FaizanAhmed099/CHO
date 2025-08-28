@@ -24,7 +24,8 @@
         content="tamimi, contracting, construction, expertise, Civil, Infrastructure, Oil & Gas, Logistics, Aviation" />
     <title>Haven of Cleanliness | Kingdom of Saudi Arabia </title>
     <link rel="stylesheet" href="custom.css">
-
+    
+    
     <!-- EDISTION'S LINKS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -292,7 +293,7 @@
         =========================== -->
     <!------ Breadcrump banner area ------>
     <section class="top-banner-area">
-        <div class="page-header-inner" style="background-image:url('../uploads/business-strategy/coppyy.png');">
+        <div class="page-header-inner" style="background-image:url('../uploads/business-strategy/strategy-banner.png');">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
@@ -423,7 +424,7 @@
                             <!-- <i class="fas fa-calendar-check" aria-hidden="true"></i> -->
                         </div>
                         <h3 class="process-step">Book Appointment</h3>
-                        <p class="process-desc">Our agency can only be as strong as our people & because of this.</p>
+                        <p class="process-desc">Schedule your cleaning service at your convenience.</p>
                     </article>
                     <article class="process-item" data-aos="fade-up" data-aos-delay="100">
                         <div class="process-icon">
@@ -432,7 +433,7 @@
                             <!-- <i class="fas fa-tasks" aria-hidden="true"></i> -->
                         </div>
                         <h3 class="process-step">Choose Services</h3>
-                        <p class="process-desc">Our agency can only be as strong as our people & because of this.</p>
+                        <p class="process-desc">Select services tailored to your home, office, or business needs.</p>
                     </article>
                     <article class="process-item" data-aos="fade-up" data-aos-delay="200">
                         <div class="process-icon">
@@ -441,14 +442,14 @@
                             <!-- <i class="fas fa-broom" aria-hidden="true"></i> -->
                         </div>
                         <h3 class="process-step">Enjoy Cleanliness</h3>
-                        <p class="process-desc">Our agency can only be as strong as our people & because of this.</p>
+                        <p class="process-desc">Sit back and relax while our expert team delivers a spotless environment you’ll love.</p>
                     </article>
                 </div>
             </section>
 
             
             <!-- DEPEND ON US: content left, image right with fade animations -->
-            <section id="depend" class="depend mb-5" aria-labelledby="depend-heading">
+            <section id="depend" class="depend mb-5"            aria-labelledby="depend-heading">
                 <div class="depend-col depend-text" data-aos="fade-up">
                     <span class="depend-eyebrow">Any Question</span>
                     <h2 id="depend-heading" class="depend-title">You Can Depend On Us<br/>Get a Good Services</h2>
@@ -484,8 +485,8 @@
                     </div>
                 </div>
 
-                <figure class="depend-col depend-media" data-aos="fade-up" data-aos-delay="150">
-                    <img src="../uploads/business-strategy/FAQ banner.jpg" alt="Smiling cleaner in uniform" />
+                <figure class="depend-col depend-media" data-aos="fade-up" data-aos-delay="100">
+                    <img src="../uploads/business-strategy/team-young-copy.jpg" alt="Smiling cleaner in uniform" />
                 </figure>
             </section>
 
@@ -1280,6 +1281,50 @@
         });
         //VIEWPORT SCRIPT ENDS
     </script>
+
+    <!-- FAQ SECTION SCRIPT  -->
+    <script>
+        $(function(){
+          var $accordion = $('.depend-accordion');
+          if(!$accordion.length) return;
+
+          var $items = $accordion.find('details.depend-item');
+          var $summaries = $items.find('> summary.depend-summary');
+          var $panels = $items.find('> .depend-panel');
+
+          // Initialize: hide all panels, then show the first
+          $panels.hide();
+          $items.removeAttr('open');
+          $items.eq(0).attr('open', true);
+          $items.eq(0).find('> .depend-panel').show();
+          $items.eq(0).find('> summary.depend-summary').addClass('active');
+
+          $summaries.on('click', function(e){
+            e.preventDefault();
+            var $summary = $(this);
+            var $item = $summary.closest('details.depend-item');
+            var $panel = $item.find('> .depend-panel');
+
+            if($summary.hasClass('active')){
+              // collapse current
+              $summary.removeClass('active');
+              $item.removeAttr('open');
+              $panel.stop(true, true).slideUp(400);
+            } else {
+              // close others
+              $summaries.removeClass('active');
+              $items.removeAttr('open');
+              $panels.stop(true, true).slideUp(400);
+
+              // open clicked
+              $summary.addClass('active');
+              $item.attr('open', true);
+              $panel.stop(true, true).slideDown(400);
+            }
+          });
+        });
+      </script>
+      <!-- FAQ SECTION SCRIPT ENDS -->
 </body>
 
 <!-- Mirrored from tamimicontracting.com/en/business-strategy by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 07 Jul 2025 13:14:33 GMT -->
