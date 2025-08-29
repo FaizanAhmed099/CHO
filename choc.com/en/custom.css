@@ -1605,6 +1605,13 @@
     grid-column: span 1;
     grid-row: span 1;
   }
+  /* BUSINESS STRATEGY */
+  .why-title{
+    font-size: 24px !important;
+  }
+  .process-title{
+    font-size: 25px !important;
+  }
 }
 
 /* Extra Small (≤ 320px) */
@@ -1843,10 +1850,21 @@
   /* .loading-img{
     margin-right: auto !important;
   } */
+   /* BUSINESS STRATEGY */
+   .why-title{
+    font-size: 24px !important;
+  }
 }
 @media (max-width: 320px) {
   .loading-img {
     margin: auto !important;
+  }
+  /* BUSINESS STRATEGY */
+  .why-title{
+    font-size: 20px !important;
+  }
+  .process-title{
+    font-size: 20px !important;
   }
 }
 
@@ -2051,7 +2069,6 @@
       }
       .why-title{
         font-family: "Loew Next Arabic"; /* Match your font */
-        font-size: 42px; /* Adjust as needed */
         text-transform: uppercase;
         color: transparent; /* Transparent fill */
         -webkit-text-stroke: 1px #999999; /* Outline color and thickness */
@@ -2113,11 +2130,11 @@
             'media'
             'text';
         }
-        .why-media{ height: 180px; }
+        .why-media{ height: 40rem; }
       }
       @media (max-width: 720px){
         .why-features{ grid-template-columns: 1fr; }
-        .why-media{ height: 160px; }
+        .why-media{ height: 255px; }
       }
 
       /* How We Work (Process) */
@@ -2233,7 +2250,7 @@
         grid-template-columns: 1.1fr .9fr; 
         align-items:center; 
         gap: 40px; 
-        margin-top: 72px; 
+        margin-top: 5px; 
       }
       .depend-col{ min-width: 0; }
       .depend-eyebrow{ 
