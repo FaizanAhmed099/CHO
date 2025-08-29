@@ -2134,7 +2134,7 @@
       }
       @media (max-width: 720px){
         .why-features{ grid-template-columns: 1fr; }
-        .why-media{ height: 255px; }
+        .why-media{ height: 22rem; }
       }
 
       /* How We Work (Process) */
